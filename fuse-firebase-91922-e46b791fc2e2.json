@@ -1,0 +1,12 @@
+{
+	"type": "service_account",
+	"project_id": "fuse-firebase-91922",
+	"private_key_id": "e46b791fc2e21949240c5890ce630bbbc52fccf0",
+	"private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDMkiMHCsfvcAzO\ndXJNEu8yAi4OPc/X3LhnlePzXTUFFvIYG0mFTRe9LVPER6Go8/afdF8WdZsJQNK7\n5zXrB2jNAGTTxOdJuQFpFLgveRHY97TBiCHoaGklCDdPi886Za5ZFymLzknRVyCO\nUR+doxnermrUmts1uJP3r6gIACR9jlRHEFBh3EBZhVlp7odYdcd2RVDGSBgFSLcV\nVJLP8Qya8vO9FUIUPMi+QJRHVubSa5qoklaO9shHZcfBX1M1TLMEYL3WEQjE2MBN\n1i+SGBP9nHi72+eA/eNcCfO85x/suo4WR7Ald6SWOBhF5RzX1lYoh3jYNtn0EzhO\nnq2F6RzhAgMBAAECggEAFlJPziHoBQFV9GUuTqilPvCr89PczPIBkRPy5ogiE+cY\nDXdUw13RHExI2p7yTcwo+ecpxPqaKx1OoUAuSvHpBo1ncxAGKK4uMDgZjNyKDQGi\nUIe5I3HZHzhRSLW5q+aSapgzaVTeCyCVpdHGQF4eoYSolYA8MRVt19Xr4MubL7PZ\nFm0OVP7wEMvWVkpZZGOcyPJPqEgZBsaE2/HjooSX6jNc6yOagyOC6RGMv1/jn8yj\nnijKgoutFBQVyGYRQeOuQ1H17fMB3YT5yCFTAK4QE79dHvm3X8AeSGKuA1ZqU0iP\nlaXeVaTvWxvcMNj67GBY2EI/JlfxszMcAJ9E+AIW0QKBgQDtk4Nq0/1ntQoYsDw/\n6atwE/YCF45UUMoOQTwnwXipdxX5WzAna49fdFqm/kYNMrDRxYWny7NnBNa3dxKQ\nTuLvAvXInVYvmxmICUHjqdpb6kXr0V04TKFCOrjc/XckzhbEnK5O1YxRCWLQDAL4\nIEvIgWMYCsWCU3fHPkN663ioXQKBgQDcb2IyacZ2/elLdedqmNGH3zWwdvWS6lE1\nJQveIudHFLXPOfXMjeYUY1W7/h2F5ppDnR58mJV7HaTezGZDPd9un9tk6xVtSADB\n4E1NTZ8+psd3Ps7KXAJ8YdQHLK5kF/w3OlNksdsuUUFrtqxYbxwa2+gmNsK2WM0E\nLCBuF3KuVQKBgDB/880kN9ArGkON/s7BYjlAKfGlY239DDK6yJAJJBvcbsT4A62Y\nfK1s8HC06hIZrhU08KMfp6E5UKgli8mgAR3wCcMJs6WGUUD/Os9CRoyLF/kbRZ+P\nrT/7AvBCYkdGN0mt/rujRsDoXJ7CRPzogvAM0fD/ifCgH4yyPk5iscAVAoGBAIv/\nGWhXETqFK+NG8EAc6gXW1uxJwNEbi5OrAYyEsknMd2Mytk7BV/xe0hZg3zMpL5P9\nd10+MsFMJGdzfQb7hqllURsYyjTrY7+9ypprz9Ukas3qz75pDRMdtmEQGXlsWjxh\nCJGM+1zBMkFMdMx9VGYif5+1a5gPcbVSqQ4CSk05AoGBAO0d4RtqSVdqB7slACIq\njY82VpXYAnk7/H/Swr8UuOhXXXDla7rz7pqpr1LmhXtWK804PN6MmfHQsqOVo6Gu\ni02Y/J/FEnbl4PVBThIxXXRzXy9Qkvrq/+BIiFi9o4tclyzGqltSzREIofg7YSvT\nFMqPMnT5JbayWwiogkryzP13\n-----END PRIVATE KEY-----\n",
+	"client_email": "fuse-firebase-91922@appspot.gserviceaccount.com",
+	"client_id": "111019178280672945087",
+	"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+	"token_uri": "https://oauth2.googleapis.com/token",
+	"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+	"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fuse-firebase-91922%40appspot.gserviceaccount.com"
+}
