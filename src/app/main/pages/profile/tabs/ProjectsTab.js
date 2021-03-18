@@ -21,6 +21,16 @@ function ProjectsTab({ projects }) {
 		return null;
 	}
 
+	if (projects.length === 0) {
+		return (
+			<div className="flex flex-1 items-center justify-center h-full">
+				<Typography color="textSecondary" variant="h5">
+					Проекты отсутвуют
+				</Typography>
+			</div>
+		);
+	}
+
 	return (
 		data && (
 			<div className="md:flex max-w-2xl">

@@ -12,10 +12,10 @@ import Typography from '@material-ui/core/Typography';
 import withReducer from 'app/store/withReducer';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { Link, useParams, useHistory, Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { defaultValues } from 'app/main/apps/e-commerce/product/constants';
-import { registerUser, getUserData, editUserData } from '../store/productSlice';
+import { registerUser, getUserData, editUserData, setToNull } from '../store/productSlice';
 import reducer from '../store';
 import Avatar from '@material-ui/core/Avatar';
 import ProjectDialog from './ProjectDialog';
@@ -31,6 +31,8 @@ import ProjectTab from './tabs/ProjectTab';
 import FuseUtils from '@fuse/utils';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Skeleton } from '@material-ui/lab';
+import { firstColumn } from './constants';
 
 const useStyles = makeStyles(theme => ({
 	inputWrapper: {
@@ -54,6 +56,12 @@ const useStyles = makeStyles(theme => ({
 		'& div': {
 			position: 'sticky',
 			top: '0px'
+		}
+	},
+	skeletonLoader: {
+		width: '100%',
+		'&:not(:last-child)': {
+			marginBottom: '20px'
 		}
 	},
 	imagePreview: {
@@ -119,41 +127,67 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
+// password: Yup.string().min(8, 'Минимальная длинна 8 символов').required('Это обязательное поле'),
+// role: Yup.string().required('Выберите роль')
+
+// password: Yup.string().when('$exists', {
+// 	is: exist => exist,
+// 	then: Yup.string().min(8, 'Минимальная длинна 8 символов').required('Это обязательное поле'),
+// 	otherwise: Yup.string()
+// }),
+// role: Yup.string().when('$exists', {
+// 	is: exist => exist,
+// 	then: Yup.string().required('Это обязательное поле'),
+// 	otherwise: Yup.string()
+// })
+
+// password: Yup.string().when('role', {
+// 	is: exist => !exist,
+// 	then: Yup.string().min(8, 'Минимальная длинна 8 символов').required('Это обязательное поле'),
+// 	otherwise: Yup.string()
+// }),
+// role: Yup.string().when('password', {
+// 	is: exist => !exist,
+// 	then: Yup.string().required('Это обязательное поле'),
+// 	otherwise: Yup.string()
+// })
+// }[['role', 'password']]
+
 const schema = Yup.object().shape({
 	firstName: Yup.string().required('Это обязательное поле'),
 	lastName: Yup.string().required('Это обязательное поле'),
 	email: Yup.string().email('Введите валидный email').required('Это обязательное поле'),
 	phone1: Yup.number()
 		.typeError('Поле должно содержать только числа')
-		.positive('Поле должно содержать только позитивные числа')
-		.required('Это обязательное поле'),
-	password: Yup.string().min(8, 'Минимальная длинна 8 символов').required('Это обязательное поле'),
-	role: Yup.string().required('Выберите роль')
+		.positive('Поле должно содержать только положительные числа')
+		.required('Это обязательное поле')
 });
 
 function Product(props) {
+	const routeParams = useParams();
+	const { userId } = routeParams;
+
 	const dispatch = useDispatch();
 	const user = useSelector(({ eCommerceApp }) => eCommerceApp.product.user);
 	const loader = useSelector(({ eCommerceApp }) => eCommerceApp.product.loading);
 	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
+	const authedUser = useSelector(({ auth }) => auth.user);
 	const theme = useTheme();
 	const classes = useStyles(props);
 	const [tabValue, setTabValue] = useState(0);
-	const routeParams = useParams();
 	const [image, setImage] = useState('');
 	const { register, handleSubmit, control, errors } = useForm({
 		resolver: yupResolver(schema)
 	});
 	const [avatarFile, setAvatarFile] = useState(blankAvatar);
 	const [projects, setProjects] = useState(null);
-	const [loadingData, setLoadingData] = useState(true);
+	const [loadingData, setLoadingData] = useState(false);
 	const [career, setCareer] = useState(null);
 	const [role, setRole] = useState(null);
 	const [userDepartment, setUserDepartment] = useState(null);
 	const [savedValues, setSavedValues] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const history = useHistory();
-	const { userId } = routeParams;
 
 	useEffect(() => {
 		dispatch(getDepartments());
@@ -180,8 +214,9 @@ function Product(props) {
 			setAvatarFile(user.avatarFile);
 			console.log('THIS IS LOADER', loader);
 			setUserDepartment(user.department);
-			setLoadingData(loader);
 		}
+
+		return () => dispatch(setToNull());
 	}, [user, userId, loader]);
 
 	function handleChangeTab(event, value) {
@@ -206,7 +241,8 @@ function Product(props) {
 		history.push('/apps/contacts/all');
 	}
 
-	function editUser(data) {
+	async function editUser(data) {
+		console.log('NOT WORKING HERE FUUUCK');
 		const userData = {
 			...data,
 			avatarFile,
@@ -220,8 +256,8 @@ function Product(props) {
 		};
 
 		// console.log('THIS IS DATA', userData);
-		dispatch(editUserData(userData));
-		history.replace('/apps/contacts/all');
+		await dispatch(editUserData(userData));
+		await history.push('/apps/contacts/all');
 	}
 
 	function handleRemoveImage() {
@@ -283,7 +319,11 @@ function Product(props) {
 		setCareer(newCareer);
 	}
 
-	if (loadingData) return <FuseLoading />;
+	if (userId === 'new' && authedUser.role !== 'admin') {
+		history.push('/apps/contacts/all');
+	}
+
+	// if (loader) return <FuseLoading />;
 
 	return (
 		<FusePageCarded
@@ -292,7 +332,7 @@ function Product(props) {
 				header: 'min-h-72 h-72 sm:h-136 sm:min-h-136'
 			}}
 			header={
-				!loadingData && (
+				savedValues && (
 					<div className="flex flex-1 w-full items-center justify-between">
 						<div className="flex flex-col items-start max-w-full">
 							<FuseAnimate animation="transition.slideRightIn" delay={300}>
@@ -365,7 +405,7 @@ function Product(props) {
 				</Tabs>
 			}
 			content={
-				!loadingData && (
+				savedValues ? (
 					<div className="p-16 sm:p-24 max-w-full">
 						<ProjectDialog getProject={handleUserCareerOrProfile} projects={projects} />
 						<CareerDialog getCareer={handleUserCareerOrProfile} />
@@ -400,9 +440,9 @@ function Product(props) {
 								{departments.length > 0 ? (
 									<TestUserInputs
 										register={register}
-										values={savedValues}
+										values={savedValues.firstName !== '' ? savedValues : ''}
 										setDepartment={setUserDepartment}
-										setRole={setRole}
+										params={userId}
 										control={control}
 										departments={departments}
 										errors={errors}
@@ -420,6 +460,40 @@ function Product(props) {
 						{tabValue === 2 && (
 							<>{career && <CareerTab career={career} deleteCareer={handleDeleteCareerOrProject} />}</>
 						)}
+					</div>
+				) : (
+					<div className="p-16 sm:p-24 max-w-full">
+						{
+							<div style={{ display: tabValue === 0 ? 'flex' : 'none' }} className={classes.inputWrapper}>
+								<div className={classes.imageContainer}>
+									<Skeleton variant="rect" width={200} height={200} animation="wave" />
+								</div>
+								<div className="flex flex-col w-1/3 mr-20">
+									{firstColumn.map(item => (
+										<Skeleton
+											variant="rect"
+											key={`${item.name}-${item.id}`}
+											width={500}
+											height={50}
+											className="mb-20"
+											animation="wave"
+										/>
+									))}
+								</div>
+								<div className="flex flex-col w-1/3">
+									{firstColumn.map(item => (
+										<Skeleton
+											variant="rect"
+											key={`${item.name}-${item.id}`}
+											width={500}
+											height={50}
+											className="mb-20"
+											animation="wave"
+										/>
+									))}
+								</div>
+							</div>
+						}
 					</div>
 				)
 			}

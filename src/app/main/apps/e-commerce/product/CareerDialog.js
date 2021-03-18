@@ -30,9 +30,9 @@ const defaultFormState = {
 const schema = Yup.object().shape({
 	position: Yup.string().required('Это обязательное поле'),
 	company: Yup.string().required('Это обязательное поле'),
-	startedAt: Yup.string().required('Это обязательное поле'),
-	status: Yup.string().required('Это обязательное поле'),
-	endedAt: Yup.string().required('Это обязательное поле')
+	startedAt: Yup.string().required('Это обязательное поле')
+	// status: Yup.string().required('Это обязательное поле')
+	// endedAt: Yup.string().required('Это обязательное поле')
 });
 
 function CareerDialog({ getCareer }) {
@@ -95,6 +95,7 @@ function CareerDialog({ getCareer }) {
 	}, [careerDialog.props.open]);
 
 	function handleSubmitCareer(data) {
+		console.log('CLICKED');
 		if (careerDialog.type === 'new') {
 			// dispatch(addUser(form));
 			getCareer({
@@ -199,7 +200,8 @@ function CareerDialog({ getCareer }) {
 							variant="outlined"
 							className="mb-20"
 							fullWidth
-							error={errors.status && errors.status}
+							required
+							// error={errors.status && errors.status}
 						>
 							<InputLabel id="status">Статус</InputLabel>
 							<Select
@@ -212,7 +214,7 @@ function CareerDialog({ getCareer }) {
 								<MenuItem value={'true'}>По настоящее время</MenuItem>
 								<MenuItem value={'false'}>Завершено</MenuItem>
 							</Select>
-							<FormHelperText>{errors.status && errors.status.message}</FormHelperText>
+							{/* <FormHelperText>{errors.status && errors.status.message}</FormHelperText> */}
 						</FormControl>
 					</div>
 
@@ -221,8 +223,8 @@ function CareerDialog({ getCareer }) {
 							<TextField
 								className="mb-24"
 								id="endedAt"
-								error={errors.endedAt && errors.endedAt}
-								helperText={errors.endedAt && errors.endedAt.message}
+								// error={activeStatus && errors.endedAt && errors.endedAt}
+								// helperText={errors.endedAt && errors.endedAt.message}
 								label="Конец"
 								inputRef={register}
 								defaultValue={values ? values.endedAt : ''}

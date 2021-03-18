@@ -48,7 +48,7 @@ function UserNavbarHeader(props) {
 	return (
 		<AppBar
 			position="static"
-			color="nav"
+			color="default"
 			elevation={0}
 			classes={{ root: classes.root }}
 			className="user relative flex flex-col items-center justify-center pt-24 pb-64 mb-32 z-0"

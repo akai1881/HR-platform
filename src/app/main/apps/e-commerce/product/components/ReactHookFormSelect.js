@@ -6,11 +6,13 @@ import { Controller } from 'react-hook-form';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { FormHelperText } from '@material-ui/core';
 
-const ReactHookFormSelect = ({ name, label, control, defaultValue, children, error, ...props }) => {
+const ReactHookFormSelect = ({ name, label, control, defaultValue, children, errors, ...props }) => {
 	const labelId = `${name}-label`;
 
+	// error={errors && errors}
+
 	return (
-		<FormControl {...props} error={error && error}>
+		<FormControl {...props} error={errors && !!errors}>
 			<InputLabel id={labelId}>{label}</InputLabel>
 			<Controller
 				as={
@@ -22,7 +24,7 @@ const ReactHookFormSelect = ({ name, label, control, defaultValue, children, err
 				control={control}
 				defaultValue={defaultValue}
 			/>
-			<FormHelperText>{error && error.message}</FormHelperText>
+			<FormHelperText>{errors && errors.message}</FormHelperText>
 		</FormControl>
 	);
 };

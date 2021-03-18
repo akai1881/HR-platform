@@ -25,22 +25,21 @@ function ContactsList(props) {
 	const [filteredData, setFilteredData] = useState(null);
 	const params = useParams();
 	const history = useHistory();
+	const [data, setData] = useState(null);
 
 	const handleRedirectEdit = profile => {
 		history.push(`/apps/employee/set/${profile.id}`);
 	};
 
-	// React.useEffect(() => {
-	// 	if (usersData.length > 0) {
-	// 		console.log(usersData);w
-	// 	}
-	// }, [usersData]);
+	React.useEffect(() => {
+		console.log(usersData);
+	}, [usersData]);
 
 	const handleDeleteUser = config => {
 		dispatch(
 			openDialog({
 				children: (
-					<React.Fragment>
+					<>
 						<DialogTitle id="alert-dialog-title">Вы уверены, что хотите удалить сотрудника?</DialogTitle>
 						<DialogActions>
 							<Button onClick={() => dispatch(closeDialog())} color="primary">
@@ -57,7 +56,7 @@ function ContactsList(props) {
 								Да, я уверен
 							</Button>
 						</DialogActions>
-					</React.Fragment>
+					</>
 				)
 			})
 		);

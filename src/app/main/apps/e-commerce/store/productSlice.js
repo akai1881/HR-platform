@@ -112,16 +112,18 @@ export const addNewUser = createAsyncThunk(
 
 export const editUserData = createAsyncThunk(
 	'eCommerceApp/product/editUserData',
-	async ({ projects, career, id, avatarFile, ...data }) => {
+	async ({ projects, career, id, avatarFile, ...data }, { dispatch }) => {
 		await firebaseService.database
 			.collection('users')
 			.doc(id)
 			.update({
 				...data,
 				avatarFile
-			});
-		await updateUserCollections(projects, 'projects', id);
-		await updateUserCollections(career, 'career', id);
+			})
+			.then(() => console.log('UPDATED AND FULLFILLED'));
+		updateUserCollections(projects, 'projects', id);
+		updateUserCollections(career, 'career', id);
+		await dispatch(getData({ id: 'all' }));
 	}
 );
 
@@ -129,7 +131,8 @@ const productSlice = createSlice({
 	name: 'eCommerceApp/product',
 	initialState: {
 		newUser: null,
-		loading: true,
+		transfer: false,
+		loading: false,
 		user: null,
 		projectDialog: {
 			type: 'new',
@@ -179,6 +182,9 @@ const productSlice = createSlice({
 					career: []
 				}
 			})
+		},
+		setTransfer: (state, action) => {
+			state.transfer = action.payload;
 		},
 		getProjects: (state, action) => {
 			state.projectDialog = {
@@ -271,9 +277,15 @@ const productSlice = createSlice({
 				},
 				data: null
 			};
+		},
+		setToNull: (state, action) => {
+			state.user = null;
 		}
 	},
 	extraReducers: {
+		[getUserData.pending]: (state, action) => {
+			state.loading = true;
+		},
 		[getUserData.rejected]: (state, action) => {
 			state.user = null;
 			state.loading = true;
@@ -291,6 +303,7 @@ export const {
 	openEditProjectDialog,
 	openNewCareerDialog,
 	openEditCareerDialog,
+	setToNull,
 	setLoading,
 	closeNewCareerDialog,
 	closeEditCareerDialog,

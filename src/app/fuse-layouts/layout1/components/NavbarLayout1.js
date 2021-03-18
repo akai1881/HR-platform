@@ -47,7 +47,7 @@ function NavbarLayout1(props) {
 	return (
 		<div className={clsx('flex flex-col overflow-hidden h-full', classes.root, props.className)}>
 			<AppBar
-				color="nav"
+				color="default"
 				position="static"
 				elevation={0}
 				classes={{ root: classes.header }}

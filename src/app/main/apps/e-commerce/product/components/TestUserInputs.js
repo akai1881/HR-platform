@@ -1,19 +1,8 @@
 import React, { useState, useEffect, useRef, createRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-	Divider,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	TextField,
-	Select,
-	OutlinedInput,
-	FormHelperText
-} from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, TextField, Select, OutlinedInput } from '@material-ui/core';
 import ReactHookFormSelect from './ReactHookFormSelect';
 import { firstColumn, secondColumn } from './../constants';
-import et from 'date-fns/esm/locale/et/index.js';
-import ContinuousSlider from 'app/main/documentation/material-ui-components/components/slider/ContinuousSlider';
 import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
@@ -32,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function TestUserInputs({ register, values, control, departments, setDepartment, setRole, errors }) {
+function TestUserInputs({ register, values, control, departments, setDepartment, params, errors }) {
 	const classes = useStyles();
 	const [editData, setEditData] = useState(values);
 	const userRole = useSelector(({ auth }) => auth.user.role);
@@ -40,15 +29,13 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 	const elementsRef = useRef(departments.map(() => createRef()));
 
 	useEffect(() => {
-		setEditData(values);
-		setSelectValue(editData.department.id);
+		if (editData) {
+			setEditData(values);
+			setSelectValue(editData.department.id);
+		}
+
 		console.log(userRole);
 	}, [values, departments]);
-
-	// const handleValue = id => {
-	// 	console.log('THIS IS ID', id);
-	// 	setDep(id);
-	// };
 
 	const handleChange = e => {
 		setSelectValue(e.target.value);
@@ -78,12 +65,12 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 								<Select
 									input={
 										<OutlinedInput
-											value={selectValue}
+											value={selectValue ? selectValue : ''}
 											id={item.id}
 											labelWidth={'department'.length * 8}
 										/>
 									}
-									value={selectValue}
+									value={selectValue ? selectValue : ''}
 									onChange={e => handleChange(e)}
 								>
 									{departments.map((dep, i) => {
@@ -103,16 +90,16 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 						);
 					}
 
-					if (item.type === 'select' && userRole === 'admin') {
+					if (item.type === 'select' && item.name === 'role' && params === 'new') {
 						return (
 							<ReactHookFormSelect
 								id={item.id}
-								error={errors[item.name] && errors[item.name]}
+								errors={errors[item.name] && errors[item.name]}
 								name={item.name}
 								key={`${item.id}-select`}
 								label={item.label}
 								control={control}
-								defaultValue={editData[item.name] != '' ? editData[item.name] : ''}
+								defaultValue={editData[item.name] || ''}
 								variant="outlined"
 								className="mb-20"
 								fullWidth
@@ -126,7 +113,7 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 						);
 					}
 
-					if (item.name === 'role' && userRole === 'user') {
+					if ((item.name === 'password' && params !== 'new') || (item.name === 'role' && params !== 'new')) {
 						return null;
 					} else {
 						return (
@@ -135,7 +122,7 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 								className={classes.inputField}
 								defaultValue={editData[item.name] !== '' ? editData[item.name] : ''}
 								label={item.label}
-								error={errors[item.name] && errors[item.name]}
+								error={errors[item.name] && !!errors[item.name]}
 								helperText={errors[item.name] && errors[item.name].message}
 								type={item.type}
 								id={item.id}
@@ -159,7 +146,7 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 								key={`${item.id}-select`}
 								label={item.label}
 								control={control}
-								defaultValue={editData[item.name] != '' ? editData[item.name] : ''}
+								defaultValue={editData[item.name] || ''}
 								variant="outlined"
 								className="mb-20"
 								fullWidth

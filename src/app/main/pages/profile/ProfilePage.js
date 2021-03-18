@@ -57,7 +57,7 @@ function ProfilePage() {
 	}
 
 	if (!user) {
-		return null;
+		return <FuseLoading />;
 	}
 
 	if (user.id !== profileId) {
@@ -155,7 +155,7 @@ function ProfilePage() {
 				}
 				content={
 					<div className="p-16 sm:p-24">
-						{selectedTab === 0 && <AboutTab user={user} />}
+						{selectedTab === 0 && <AboutTab user={user} authedUser={authedUser} profileId={profileId} />}
 						{selectedTab === 1 && <ProjectsTab projects={projects} />}
 					</div>
 				}

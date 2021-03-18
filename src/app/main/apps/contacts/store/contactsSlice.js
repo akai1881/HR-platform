@@ -112,6 +112,9 @@ const contactsSlice = createSlice({
 				},
 				data: null
 			};
+		},
+		setUsersToNull: (state, action) => {
+			state.users = [];
 		}
 	},
 	extraReducers: {
@@ -127,6 +130,7 @@ const contactsSlice = createSlice({
 export const {
 	setContactsSearchText,
 	openNewDepartmentDialog,
+	setUsersToNull,
 	closeNewDepartmentDialog,
 	openEditDepartmentDialog,
 	closeEditDepartmentDialog

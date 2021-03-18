@@ -32,7 +32,7 @@ function Logo() {
 
 	return (
 		<div className={clsx(classes.root, 'flex items-center')}>
-			<Typography className="text-16 mx-12 font-light logo-text" color="nav">
+			<Typography className="text-16 mx-12 font-light logo-text" color="primary">
 				HR
 			</Typography>
 			<div className={clsx(classes.reactBadge, 'react-badge flex items-center py-4 px-8 rounded')}>

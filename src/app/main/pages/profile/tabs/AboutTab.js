@@ -22,10 +22,10 @@ import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import Paper from '@material-ui/core/Paper';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-function AboutTab({ user }) {
+function AboutTab({ user, profileId, authedUser }) {
 	const [data, setData] = useState(null);
-	// const userRole = useSelector(({ auth }) => auth.user.role);
 
 	useEffect(() => {
 		if (user) {
@@ -184,31 +184,33 @@ function AboutTab({ user }) {
 							</CardContent>
 						</Card>
 
-						<Card className="w-full mb-16 rounded-8">
-							<AppBar position="static" elevation={0}>
-								<Toolbar className="px-8">
-									<Typography variant="subtitle1" color="inherit" className="flex-1 px-12">
-										Банковские реквизиты
-									</Typography>
-								</Toolbar>
-							</AppBar>
-							<CardContent className="p-16">
-								<div className="mb-24">
-									<Typography className="font-bold mb-4 text-15">Банк</Typography>
-									<Typography>{user.bank}</Typography>
-								</div>
+						{authedUser.role === 'admin' || authedUser.uid === profileId ? (
+							<Card className="w-full mb-16 rounded-8">
+								<AppBar position="static" elevation={0}>
+									<Toolbar className="px-8">
+										<Typography variant="subtitle1" color="inherit" className="flex-1 px-12">
+											Банковские реквизиты
+										</Typography>
+									</Toolbar>
+								</AppBar>
+								<CardContent className="p-16">
+									<div className="mb-24">
+										<Typography className="font-bold mb-4 text-15">Банк</Typography>
+										<Typography>{user.bank}</Typography>
+									</div>
 
-								<div className="mb-24">
-									<Typography className="font-bold mb-4 text-15">Номер карты</Typography>
-									<Typography>{user.creditCardNumber}</Typography>
-								</div>
+									<div className="mb-24">
+										<Typography className="font-bold mb-4 text-15">Номер карты</Typography>
+										<Typography>{user.creditCardNumber}</Typography>
+									</div>
 
-								<div className="mb-24">
-									<Typography className="font-bold mb-4 text-15">Лицевой счет</Typography>
-									<Typography>{user.accountNumber}</Typography>
-								</div>
-							</CardContent>
-						</Card>
+									<div className="mb-24">
+										<Typography className="font-bold mb-4 text-15">Лицевой счет</Typography>
+										<Typography>{user.accountNumber}</Typography>
+									</div>
+								</CardContent>
+							</Card>
+						) : null}
 					</FuseAnimateGroup>
 				</div>
 			</div>

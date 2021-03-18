@@ -1,6 +1,6 @@
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import withReducer from 'app/store/withReducer';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDeepCompareEffect } from '@fuse/hooks';
@@ -9,7 +9,7 @@ import ContactsHeader from './ContactsHeader';
 import ContactsList from './ContactsList';
 import ContactsSidebarContent from './ContactsSidebarContent';
 import reducer from './store';
-import { getData, getDepartments } from './store/contactsSlice';
+import { getData, getDepartments, setUsersToNull } from './store/contactsSlice';
 
 function ContactsApp() {
 	const dispatch = useDispatch();
@@ -17,9 +17,16 @@ function ContactsApp() {
 	const pageLayout = useRef(null);
 	const routeParams = useParams();
 
-	useDeepCompareEffect(() => {
+	// useDeepCompareEffect(() => {
+	// 	dispatch(getData(routeParams));
+	// 	dispatch(getDepartments());
+	// }, [dispatch, routeParams]);
+
+	useEffect(() => {
 		dispatch(getData(routeParams));
 		dispatch(getDepartments());
+
+		return () => dispatch(setUsersToNull());
 	}, [dispatch, routeParams]);
 
 	return (

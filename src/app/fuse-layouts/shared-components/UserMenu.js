@@ -8,19 +8,22 @@ import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { logoutUser } from 'app/auth/store/userSlice';
 
 function UserMenu(props) {
 	const dispatch = useDispatch();
 	const user = useSelector(({ auth }) => auth.user);
 	const userRole = useSelector(({ auth }) => auth.user.role);
+	const routeParams = useParams();
 
 	const [userMenu, setUserMenu] = useState(null);
 
 	const userMenuClick = event => {
 		setUserMenu(event.currentTarget);
 	};
+
+	React.useEffect(() => {}, []);
 
 	const userMenuClose = () => {
 		setUserMenu(null);
@@ -39,10 +42,18 @@ function UserMenu(props) {
 					</Typography>
 				</div>
 
-				{user.data.photoURL ? (
-					<Avatar className="md:mx-4" alt="user photo" src={user.data.photoURL} />
+				{user.data.photoURL && user.role === 'admin' ? (
+					<Avatar
+						className="md:mx-4"
+						alt="user photo"
+						className="bg-transparent border-1 border-gray-50 w-60 h-60 p-1"
+					>
+						<img src={user.data.photoURL} className="" alt="" />
+					</Avatar>
 				) : (
-					<Avatar className="md:mx-4">{user.data.displayName[0]}</Avatar>
+					<Avatar className="md:mx-4">
+						<img src={user.avatarFile} alt="" />
+					</Avatar>
 				)}
 			</Button>
 
