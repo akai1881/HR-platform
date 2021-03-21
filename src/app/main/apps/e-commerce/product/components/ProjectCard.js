@@ -53,7 +53,8 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-export default function ProjectCard({ project, handleDelete, menu }) {
+export default function ProjectCard(props) {
+	const { project, handleDelete, menu } = props;
 	const classes = useStyles();
 	const [image, setImage] = useState(null);
 	const [anchorEl, setAnchorEl] = useState(null);

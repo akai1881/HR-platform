@@ -1,3 +1,5 @@
+import { first } from 'lodash-es';
+
 export const defaultValues = {
 	firstName: '',
 	lastName: '',
@@ -190,3 +192,21 @@ export const secondColumn = [
 		type: 'text'
 	}
 ];
+
+let arr = ['hello', 'world', 1, 'this is string', 'another string'];
+
+const sortType = arr => {
+	let firstType;
+	let counter = 0;
+	for (let i = 0; i < arr.length; i++) {
+		if (typeof arr[i] === firstType) {
+			counter++;
+		} else {
+			firstType = typeof arr[i];
+		}
+	}
+
+	console.log(firstType, counter);
+};
+
+sortType(arr);
