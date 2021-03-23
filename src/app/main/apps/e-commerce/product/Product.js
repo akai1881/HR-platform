@@ -1,5 +1,4 @@
 import FuseAnimate from '@fuse/core/FuseAnimate';
-import FuseLoading from '@fuse/core/FuseLoading';
 import FusePageCarded from '@fuse/core/FusePageCarded';
 import _ from '@lodash';
 import Button from '@material-ui/core/Button';
@@ -192,6 +191,10 @@ function Product(props) {
 	useEffect(() => {
 		dispatch(getDepartments());
 		if (userId === 'new') {
+			// if (userId === 'new' && authedUser.role !== 'admin') {
+			// 	history.push('/apps/contacts/all');
+			// 	return;
+			// }
 			console.log('THIS IS DEFAULT VALUES when data is new', savedValues);
 			setSavedValues(defaultValues);
 			setProjects(defaultValues.projects);
@@ -207,6 +210,10 @@ function Product(props) {
 
 	useEffect(() => {
 		if (user && !loader && user.id == userId) {
+			// if (userId !== authedUser.id) {
+			// 	history.push('/apps/contacts/all');
+			// 	return;
+			// }
 			console.log('THIS IS USER DATA FROM STORE', user);
 			setSavedValues(user);
 			setProjects(user.projects);
@@ -232,7 +239,7 @@ function Product(props) {
 				id: userDepartment.id,
 				name: userDepartment.name
 			},
-			id: FuseUtils.generateGUID(),
+			uid: FuseUtils.generateGUID(),
 			projects,
 			career
 		};
@@ -242,7 +249,6 @@ function Product(props) {
 	}
 
 	async function editUser(data) {
-		console.log('NOT WORKING HERE FUUUCK');
 		const userData = {
 			...data,
 			avatarFile,
@@ -319,9 +325,9 @@ function Product(props) {
 		setCareer(newCareer);
 	}
 
-	if (userId === 'new' && authedUser.role !== 'admin') {
-		history.push('/apps/contacts/all');
-	}
+	// if (userId === 'new' && authedUser.role !== 'admin') {
+	// 	history.push('/apps/contacts/all');
+	// }
 
 	// if (loader) return <FuseLoading />;
 
@@ -473,7 +479,7 @@ function Product(props) {
 										<Skeleton
 											variant="rect"
 											key={`${item.name}-${item.id}`}
-											width={500}
+											width="100%"
 											height={50}
 											className="mb-20"
 											animation="wave"
@@ -485,7 +491,7 @@ function Product(props) {
 										<Skeleton
 											variant="rect"
 											key={`${item.name}-${item.id}`}
-											width={500}
+											width="100%"
 											height={50}
 											className="mb-20"
 											animation="wave"

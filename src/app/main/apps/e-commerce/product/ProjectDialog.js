@@ -18,15 +18,17 @@ import { closeEditProjectDialog, closeNewProjectDialog } from '../store/productS
 import FileInput from './components/FileInput';
 import { useForm } from 'react-hook-form';
 import firebaseServices from 'app/services/firebaseService/firebaseService';
-
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@material-ui/core';
 
 const defaultFormState = {
 	id: '',
 	title: '',
-	date: '',
+	startedAt: '',
+	endedAt: '',
 	link: '',
+	github: '',
 	description: ''
 };
 
@@ -39,12 +41,13 @@ function ProjectDialog({ getProject }) {
 	const projectDialog = useSelector(({ eCommerceApp }) => eCommerceApp.product.projectDialog);
 	const [image, setImage] = useState(null);
 	const [cover, setCover] = useState(null);
+	const [locale, setLocale] = useState('ru');
+	const [activeStatus, setActiveStatus] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [values, setValues] = useState(null);
 	const { register, handleSubmit, errors } = useForm({
 		resolver: yupResolver(schema)
 	});
-	const [valid, setValid] = useState(false);
 
 	const initDialog = useCallback(() => {
 		/**
@@ -102,6 +105,7 @@ function ProjectDialog({ getProject }) {
 			getProject({
 				id: FuseUtils.generateGUID(),
 				...data,
+				activeStatus,
 				type: 'projects',
 				cover
 			});
@@ -112,6 +116,7 @@ function ProjectDialog({ getProject }) {
 		getProject({
 			id: projectDialog.data.id,
 			...data,
+			activeStatus,
 			type: 'projects',
 			cover
 		});
@@ -197,13 +202,27 @@ function ProjectDialog({ getProject }) {
 
 					<div className="flex">
 						<TextField
+							className="mb-24"
+							id="link"
+							name="github"
+							label="Ссылка на github"
+							type="text"
+							inputRef={register}
+							defaultValue={values ? values.github : ''}
+							variant="outlined"
+							fullWidth
+						/>
+					</div>
+
+					<div className="flex">
+						<TextField
 							id="projectDate"
 							className="mb-24"
-							label="Дата"
-							name="date"
+							label="Начало"
+							name="startedAt"
 							type="date"
 							inputRef={register}
-							defaultValue={values ? values.date : ''}
+							defaultValue={values ? values.startedAt : ''}
 							InputLabelProps={{
 								shrink: true
 							}}
@@ -211,6 +230,48 @@ function ProjectDialog({ getProject }) {
 							size="medium"
 						/>
 					</div>
+
+					<div className="flex">
+						<FormControl
+							variant="outlined"
+							className="mb-20"
+							fullWidth
+							required
+							// error={errors.status && errors.status}
+						>
+							<InputLabel id="status">Статус</InputLabel>
+							<Select
+								input={
+									<OutlinedInput name="status" id="status-select" labelWidth={'status'.length * 8} />
+								}
+								value={activeStatus.toString()}
+								onChange={e => setActiveStatus(() => e.target.value === 'true')}
+							>
+								<MenuItem value={'true'}>По настоящее время</MenuItem>
+								<MenuItem value={'false'}>Завершено</MenuItem>
+							</Select>
+							{/* <FormHelperText>{errors.status && errors.status.message}</FormHelperText> */}
+						</FormControl>
+					</div>
+
+					{!activeStatus ? (
+						<div className="flex">
+							<TextField
+								id="endedAt"
+								className="mb-24"
+								label="Конец"
+								name="endedAt"
+								type="date"
+								inputRef={register}
+								defaultValue={values ? values.endedAt : ''}
+								InputLabelProps={{
+									shrink: true
+								}}
+								variant="outlined"
+								size="medium"
+							/>
+						</div>
+					) : null}
 
 					<div className="flex">
 						<TextField

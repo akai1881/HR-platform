@@ -151,7 +151,25 @@ export const secondColumn = [
 		id: 'maritalStatus',
 		name: 'maritalStatus',
 		label: 'Cемейное положение',
-		type: 'text'
+		type: 'select',
+		variants: [
+			{
+				value: 'Холост',
+				label: 'Холост'
+			},
+			{
+				value: 'Женат',
+				label: 'Женат'
+			},
+			{
+				value: 'Не замужем',
+				label: 'Не замужем'
+			},
+			{
+				value: 'Замужем',
+				label: 'Замужем'
+			}
+		]
 	},
 	{
 		id: 'rank',
@@ -192,21 +210,3 @@ export const secondColumn = [
 		type: 'text'
 	}
 ];
-
-let arr = ['hello', 'world', 1, 'this is string', 'another string'];
-
-const sortType = arr => {
-	let firstType;
-	let counter = 0;
-	for (let i = 0; i < arr.length; i++) {
-		if (typeof arr[i] === firstType) {
-			counter++;
-		} else {
-			firstType = typeof arr[i];
-		}
-	}
-
-	console.log(firstType, counter);
-};
-
-sortType(arr);

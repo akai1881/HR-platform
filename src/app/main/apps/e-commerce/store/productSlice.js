@@ -67,6 +67,7 @@ export const registerUser = createAsyncThunk('eCommerceApp/product/registerUser'
 				.set({
 					email,
 					id: user.uid,
+					uid: user.uid,
 					...rest
 				});
 			await saveToUserCollections(projects, 'projects', user.uid);

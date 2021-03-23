@@ -7,15 +7,20 @@ export const getData = createAsyncThunk('contacts/getData', async (routeParams, 
 		const usersRef = await firebaseService.database
 			.collection('users')
 			.where('department.id', '==', routeParams.id)
-			.where('role', '!=', 'admin')
 			.get();
 		const usersData = await usersRef.docs.map(user => ({ ...user.data(), id: user.id }));
 		return usersData;
 	} else {
-		const usersRef = await firebaseService.database.collection('users').where('role', '!=', 'admin').get();
+		const usersRef = await firebaseService.database.collection('users').get();
 		const usersData = await usersRef.docs.map(user => ({ ...user.data(), id: user.id }));
 		return usersData;
 	}
+});
+
+export const getAdmins = createAsyncThunk('contacts/getAdmins', async () => {
+	const adminRef = await firebaseService.database.collection('users').where('role', '==', 'admin').get();
+	const adminsData = await adminRef.docs.map(admin => ({ ...admin.data(), id: admin.id }));
+	return adminsData;
 });
 
 export const getDepartments = createAsyncThunk('contacts/getDepartments', async (_, { getState }) => {
@@ -49,6 +54,16 @@ export const deleteUser = createAsyncThunk('contactsApp/contacts/deleteUser', as
 		});
 });
 
+export const editDepartment = createAsyncThunk('contactsApp/contacts/editDepartment', async (data, { dispatch }) => {
+	firebaseService.database
+		.collection('departments')
+		.doc(data.id)
+		.update({
+			...data
+		})
+		.then(() => dispatch(getDepartments()));
+});
+
 const contactsAdapter = createEntityAdapter({});
 
 export const { selectAll: selectContacts, selectById: selectContactsById } = contactsAdapter.getSelectors(
@@ -62,6 +77,13 @@ const contactsSlice = createSlice({
 		departments: [],
 		searchText: '',
 		routeParams: {},
+		departmentDialog: {
+			type: 'new',
+			props: {
+				open: false
+			},
+			data: null
+		},
 		contactDialog: {
 			type: 'new',
 			props: {
@@ -96,7 +118,7 @@ const contactsSlice = createSlice({
 			};
 		},
 		openEditDepartmentDialog: (state, action) => {
-			state.contactDialog = {
+			state.departmentDialog = {
 				type: 'edit',
 				props: {
 					open: true
@@ -105,7 +127,7 @@ const contactsSlice = createSlice({
 			};
 		},
 		closeEditDepartmentDialog: (state, action) => {
-			state.contactDialog = {
+			state.departmentDialog = {
 				type: 'edit',
 				props: {
 					open: false
@@ -123,6 +145,9 @@ const contactsSlice = createSlice({
 		},
 		[getDepartments.fulfilled]: (state, action) => {
 			state.departments = action.payload;
+		},
+		[getAdmins.fulfilled]: (state, action) => {
+			state.users = action.payload;
 		}
 	}
 });

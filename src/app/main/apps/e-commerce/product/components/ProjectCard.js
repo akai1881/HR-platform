@@ -12,8 +12,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useDispatch } from 'react-redux';
 import { closeDialog, openDialog } from 'app/store/fuse/dialogSlice';
-import { Button, DialogActions, DialogTitle } from '@material-ui/core';
+import clsx from 'clsx';
+import { Button, CardActions, Collapse, DialogActions, DialogTitle } from '@material-ui/core';
 import { openEditProjectDialog } from '../../store/productSlice';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Link from '@material-ui/core/Link';
 
 const useStyles = makeStyles(theme => ({
@@ -57,6 +59,7 @@ export default function ProjectCard(props) {
 	const { project, handleDelete, menu } = props;
 	const classes = useStyles();
 	const [image, setImage] = useState(null);
+	const [expanded, setExpanded] = React.useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
 
 	const dispatch = useDispatch();
@@ -85,6 +88,10 @@ export default function ProjectCard(props) {
 	const removeProject = () => {
 		handleDelete(project);
 		dispatch(closeDialog());
+	};
+
+	const handleExpandClick = () => {
+		setExpanded(!expanded);
 	};
 
 	const handleDeleteDialog = () => {
@@ -119,23 +126,58 @@ export default function ProjectCard(props) {
 					) : null
 				}
 				title={project.title}
-				subheader={project.date}
 			/>
 			<Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
 				<MenuItem onClick={handleOpenEdit}>Изменить</MenuItem>
 				<MenuItem onClick={handleDeleteDialog}>Удалить</MenuItem>
 			</Menu>
-			{image && <CardMedia className={classes.media} image={image} title="Paella dish" />}
+			{image && <CardMedia className={classes.media} image={image} />}
 			<CardContent className={classes.cardContent}>
-				<div className={classes.cardDescr}>{project.description}</div>
 				<div>
+					<Typography variant="h6" className="text-base">
+						Начало: <span className="text-gray-800">{project.startedAt}</span>
+					</Typography>
+					{project.activeStatus ? (
+						<Typography variant="h6" className="text-base">
+							Статус: <span className="text-gray-800">В разработке</span>{' '}
+						</Typography>
+					) : (
+						<Typography variant="h6" className="text-base">
+							Конец: <span className="text-gray-800">{project.endedAt}</span>
+						</Typography>
+					)}
 					<Typography variant="body1" className="mt-20" color="textSecondary">
 						<Link target="_blank" href={project.link} onClick={e => e.preventDefault}>
 							Ссылка на проект
 						</Link>
 					</Typography>
+					<Typography variant="body1" className="mt-20" color="textSecondary">
+						<Link target="_blank" href={project.github} onClick={e => e.preventDefault}>
+							Ссылка на GitHub
+						</Link>
+					</Typography>
 				</div>
 			</CardContent>
+			<CardActions disableSpacing>
+				<Button onClick={handleExpandClick} aria-label="Показать описание" className="text-left w-full">
+					Показать описание
+				</Button>
+				<IconButton
+					className={clsx(classes.expand, {
+						[classes.expandOpen]: expanded
+					})}
+					onClick={handleExpandClick}
+					aria-expanded={expanded}
+					aria-label="Показать описание"
+				>
+					<ExpandMoreIcon />
+				</IconButton>
+			</CardActions>
+			<Collapse in={expanded} timeout="auto" unmountOnExit>
+				<CardContent>
+					<Typography paragraph>{project.description}</Typography>
+				</CardContent>
+			</Collapse>
 		</Card>
 	);
 }

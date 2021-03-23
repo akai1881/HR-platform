@@ -101,6 +101,11 @@ function ContactsList(props) {
 				sortable: true
 			},
 			{
+				Header: 'Роль',
+				accessor: 'role',
+				sortable: true
+			},
+			{
 				id: 'action',
 				width: 128,
 				sortable: false,

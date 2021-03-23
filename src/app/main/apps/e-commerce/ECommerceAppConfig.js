@@ -1,3 +1,4 @@
+import { authRoles } from 'app/auth';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
@@ -8,6 +9,11 @@ const ECommerceAppConfig = {
 	routes: [
 		{
 			path: '/apps/employee/set/:userId/:userHandle?',
+			component: React.lazy(() => import('./product/Product'))
+		},
+		{
+			path: '/apps/employee/set/new',
+			auth: authRoles.admin,
 			component: React.lazy(() => import('./product/Product'))
 		},
 		{

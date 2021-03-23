@@ -90,19 +90,17 @@ function UserMenu(props) {
 					</>
 				) : (
 					<>
-						{userRole !== 'admin' ? (
-							<MenuItem
-								component={Link}
-								to={`/pages/profile/${user.uid}`}
-								onClick={userMenuClose}
-								role="button"
-							>
-								<ListItemIcon className="min-w-40">
-									<Icon>account_circle</Icon>
-								</ListItemIcon>
-								<ListItemText primary="Мой профиль" />
-							</MenuItem>
-						) : null}
+						<MenuItem
+							component={Link}
+							to={`/pages/profile/${user.uid}`}
+							onClick={userMenuClose}
+							role="button"
+						>
+							<ListItemIcon className="min-w-40">
+								<Icon>account_circle</Icon>
+							</ListItemIcon>
+							<ListItemText primary="Мой профиль" />
+						</MenuItem>
 
 						<MenuItem
 							onClick={() => {

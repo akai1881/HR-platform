@@ -56,13 +56,13 @@ function ProfilePage() {
 		setSelectedTab(value);
 	}
 
-	if (!user) {
+	if (!user || user.id !== profileId) {
 		return <FuseLoading />;
 	}
 
-	if (user.id !== profileId) {
-		return <FuseLoading />;
-	}
+	// if (user.id !== profileId) {
+	// 	return <FuseLoading />;
+	// }
 
 	const { projects } = user;
 

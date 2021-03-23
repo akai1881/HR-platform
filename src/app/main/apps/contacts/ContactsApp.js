@@ -9,7 +9,7 @@ import ContactsHeader from './ContactsHeader';
 import ContactsList from './ContactsList';
 import ContactsSidebarContent from './ContactsSidebarContent';
 import reducer from './store';
-import { getData, getDepartments, setUsersToNull } from './store/contactsSlice';
+import { getData,getAdmins, getDepartments, setUsersToNull } from './store/contactsSlice';
 
 function ContactsApp() {
 	const dispatch = useDispatch();
@@ -23,7 +23,11 @@ function ContactsApp() {
 	// }, [dispatch, routeParams]);
 
 	useEffect(() => {
-		dispatch(getData(routeParams));
+		if (routeParams.id === 'admin') {
+			dispatch(getAdmins())
+		} else {
+			dispatch(getData(routeParams));
+		}
 		dispatch(getDepartments());
 
 		return () => dispatch(setUsersToNull());

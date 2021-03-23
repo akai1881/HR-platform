@@ -1,5 +1,6 @@
 import FuseAnimate from '@fuse/core/FuseAnimate';
 import NavLinkAdapter from '@fuse/core/NavLinkAdapter';
+import { Fab } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
@@ -11,7 +12,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { openNewDepartmentDialog } from './store/contactsSlice';
+import { openEditDepartmentDialog, openNewDepartmentDialog } from './store/contactsSlice';
+import DepartmentDialog from './DepartmentDialog';
 
 const useStyles = makeStyles(theme => ({
 	listItem: {
@@ -33,6 +35,13 @@ const useStyles = makeStyles(theme => ({
 		'& .list-item-icon': {
 			marginRight: 16
 		}
+	},
+	tooltip: {
+		width: '30px',
+		cursor: 'pointer !important',
+		height: '30px',
+		pointerEvents: 'auto',
+		minHeight: '20px'
 	}
 }));
 
@@ -44,7 +53,14 @@ function ContactsSidebarContent(props) {
 	const history = useHistory();
 
 	const handleRedirect = () => {
-		history.replace('/apps/employee/set/new');
+		history.push('/apps/employee/set/new');
+	};
+
+	const handleEditClick = (e, data) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		dispatch(openEditDepartmentDialog(data));
 	};
 
 	return (
@@ -90,6 +106,21 @@ function ContactsSidebarContent(props) {
 						</Icon>
 						<ListItemText className="truncate" primary="Все сотрудники" disableTypography />
 					</ListItem>
+					{userRole === 'admin' ? (
+						<ListItem
+							button
+							component={NavLinkAdapter}
+							to={`/apps/contacts/admin`}
+							activeClassName="active"
+							className={classes.listItem}
+						>
+							<Icon className="list-item-icon text-16" color="action">
+								admin_panel_settings
+							</Icon>
+							<ListItemText className="truncate" primary="Администраторы" disableTypography />
+						</ListItem>
+					) : null}
+
 					{departments &&
 						departments.map(dep => (
 							<ListItem
@@ -104,10 +135,19 @@ function ContactsSidebarContent(props) {
 									star
 								</Icon>
 								<ListItemText className="truncate" primary={`${dep.name}`} disableTypography />
+								<Fab
+									color="secondary"
+									aria-label="add"
+									onClick={e => handleEditClick(e, { name: dep.name, id: dep.id })}
+									className={`absolute right-0 ${classes.tooltip} z-999`}
+								>
+									<Icon style={{ fontSize: '1.9rem' }}>edit</Icon>
+								</Fab>
 							</ListItem>
 						))}
 				</List>
 			</Paper>
+			<DepartmentDialog />
 		</div>
 	);
 }
