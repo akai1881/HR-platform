@@ -1,5 +1,4 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import order from './orderSlice';
 import orders from './ordersSlice';
 import product from './productSlice';
 import contacts from 'app/main/apps/contacts/store/contactsSlice';
@@ -9,8 +8,7 @@ const reducer = combineReducers({
 	contacts,
 	products,
 	product,
-	orders,
-	order
+	orders
 });
 
 export default reducer;

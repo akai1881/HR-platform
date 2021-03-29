@@ -25,6 +25,14 @@ const navigationConfig = [
 				type: 'item',
 				icon: 'account_box',
 				url: '/apps/contacts/all'
+			},
+			{
+				id: 'calendar',
+				title: 'Календарь',
+				translate: 'Календарь',
+				type: 'item',
+				icon: 'today',
+				url: '/apps/calendar'
 			}
 		]
 	}

@@ -9,21 +9,24 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useParams, withRouter } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import OrdersStatus from '../order/OrdersStatus';
-import { selectOrders, getOrders } from '../store/ordersSlice';
+import { selectOrders, getOrders, getUsersData } from '../store/ordersSlice';
 import OrdersTableHead from './OrdersTableHead';
+import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
 
 function OrdersTable(props) {
 	const dispatch = useDispatch();
-	const orders = useSelector(selectOrders);
-	const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
-
+	const orders = useSelector(({ eCommerceApp }) => eCommerceApp.orders.users);
+	// const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
+	const params = useParams();
 	const [loading, setLoading] = useState(true);
 	const [selected, setSelected] = useState([]);
-	const [data, setData] = useState(orders);
+	const [data, setData] = useState([]);
+	const [users, setUsers] = useState(null);
 	const [page, setPage] = useState(0);
+	const [time, setTime] = useState(new Date());
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [order, setOrder] = useState({
 		direction: 'asc',
@@ -31,17 +34,21 @@ function OrdersTable(props) {
 	});
 
 	useEffect(() => {
-		dispatch(getOrders()).then(() => setLoading(false));
+		// dispatch(getOrders()).then(() => setLoading(false));
+		dispatch(getUsersData(params.dayId));
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (searchText.length !== 0) {
-			setData(FuseUtils.filterArrayByString(orders, searchText));
-			setPage(0);
-		} else {
-			setData(orders);
+		// if (searchText.length !== 0) {
+		// 	setData(FuseUtils.filterArrayByString(orders, searchText));
+		// 	setPage(0);
+		// } else {
+		// }
+		if (orders.length > 0) {
+			setLoading(false);
 		}
-	}, [orders, searchText]);
+		console.log('this is orders', orders);
+	}, [orders]);
 
 	function handleRequestSort(event, property) {
 		const id = property;
@@ -65,8 +72,12 @@ function OrdersTable(props) {
 		setSelected([]);
 	}
 
+	function formatTimes(date) {
+		return new Date(date).toLocaleTimeString();
+	}
+
 	function handleClick(item) {
-		props.history.push(`/apps/e-commerce/orders/${item.id}`);
+		props.history.push(`/pages/profile/${item.id}`);
 	}
 
 	function handleCheck(event, id) {
@@ -101,44 +112,20 @@ function OrdersTable(props) {
 	return (
 		<div className="w-full flex flex-col">
 			<FuseScrollbars className="flex-grow overflow-x-auto">
-				<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
-					<OrdersTableHead
-						numSelected={selected.length}
-						order={order}
-						onSelectAllClick={handleSelectAllClick}
-						onRequestSort={handleRequestSort}
-						rowCount={data.length}
-					/>
+				{orders.length > 0 ? (
+					<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
+						<OrdersTableHead
+							numSelected={selected.length}
+							order={order}
+							onSelectAllClick={handleSelectAllClick}
+							onRequestSort={handleRequestSort}
+							rowCount={orders.length}
+						/>
 
-					<TableBody>
-						{_.orderBy(
-							data,
-							[
-								o => {
-									switch (order.id) {
-										case 'id': {
-											return parseInt(o.id, 10);
-										}
-										case 'customer': {
-											return o.customer.firstName;
-										}
-										case 'payment': {
-											return o.payment.method;
-										}
-										case 'status': {
-											return o.status[0].name;
-										}
-										default: {
-											return o[order.id];
-										}
-									}
-								}
-							],
-							[order.direction]
-						)
-							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.map(n => {
+						<TableBody>
+							{orders.map(n => {
 								const isSelected = selected.indexOf(n.id) !== -1;
+								console.log(n.firstName);
 								return (
 									<TableRow
 										className="h-64 cursor-pointer"
@@ -150,53 +137,41 @@ function OrdersTable(props) {
 										selected={isSelected}
 										onClick={event => handleClick(n)}
 									>
-										<TableCell className="w-40 md:w-64 text-center" padding="none">
-											<Checkbox
-												checked={isSelected}
-												onClick={event => event.stopPropagation()}
-												onChange={event => handleCheck(event, n.id)}
-											/>
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.firstName} {n.lastName}
+										</TableCell>
+
+										{/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+											{n.lastName}
+										</TableCell> */}
+
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.phone}
 										</TableCell>
 
 										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.id}
+											{n.department}
 										</TableCell>
 
 										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.reference}
-										</TableCell>
-
-										<TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-											{`${n.customer.firstName} ${n.customer.lastName}`}
-										</TableCell>
-
-										<TableCell className="p-4 md:p-16" component="th" scope="row" align="right">
-											<span>$</span>
-											{n.total}
+											<OrdersStatus name={n.isLate} />
 										</TableCell>
 
 										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.payment.method}
-										</TableCell>
-
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											<OrdersStatus name={n.status[0].name} />
-										</TableCell>
-
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.date}
+											{n.date.slice(0, 10).split('-').reverse().join('-')} {formatTimes(n.date)}
 										</TableCell>
 									</TableRow>
 								);
 							})}
-					</TableBody>
-				</Table>
+						</TableBody>
+					</Table>
+				) : null}
 			</FuseScrollbars>
 
 			<TablePagination
 				className="flex-shrink-0 border-t-1"
 				component="div"
-				count={data.length}
+				count={orders.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				backIconButtonProps={{

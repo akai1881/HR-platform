@@ -4,26 +4,44 @@ import Input from '@material-ui/core/Input';
 import Paper from '@material-ui/core/Paper';
 import { ThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectMainTheme } from 'app/store/fuse/settingsSlice';
-import { setOrdersSearchText } from '../store/ordersSlice';
+import { setOrdersSearchText, getTime } from '../store/ordersSlice';
+import { useParams, useHistory } from 'react-router';
 
 function OrdersHeader(props) {
 	const dispatch = useDispatch();
 	const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
+	const time = useSelector(({ eCommerceApp }) => eCommerceApp.orders.time);
 	const mainTheme = useSelector(selectMainTheme);
+	const params = useParams();
+	const history = useHistory();
+
+	useEffect(() => {
+		dispatch(getTime(params.dayId));
+	}, [params]);
 
 	return (
 		<div className="flex flex-1 w-full items-center justify-between">
 			<div className="flex items-center">
+				<Typography
+					className="normal-case flex items-center"
+					role="button"
+					color="inherit"
+					onClick={() => history.push('/apps/calendar')}
+				>
+					<Icon className="text-20">arrow_back</Icon>
+					<span className="mx-4">Назад</span>
+				</Typography>
+
 				<FuseAnimate animation="transition.expandIn" delay={300}>
-					<Icon className="text-32">shopping_basket</Icon>
+					<Icon className="text-32">people</Icon>
 				</FuseAnimate>
 
 				<FuseAnimate animation="transition.slideLeftIn" delay={300}>
 					<Typography className="hidden sm:flex mx-0 sm:mx-12" variant="h6">
-						Orders
+						Сотрудники
 					</Typography>
 				</FuseAnimate>
 			</div>
@@ -31,21 +49,9 @@ function OrdersHeader(props) {
 			<div className="flex flex-1 items-center justify-center px-12">
 				<ThemeProvider theme={mainTheme}>
 					<FuseAnimate animation="transition.slideDownIn" delay={300}>
-						<Paper className="flex items-center w-full max-w-512 px-8 py-4 rounded-8" elevation={1}>
-							<Icon color="action">search</Icon>
-
-							<Input
-								placeholder="Search"
-								className="flex flex-1 mx-8"
-								disableUnderline
-								fullWidth
-								value={searchText}
-								inputProps={{
-									'aria-label': 'Search'
-								}}
-								onChange={ev => dispatch(setOrdersSearchText(ev))}
-							/>
-						</Paper>
+						<Typography className="hidden sm:flex mx-0 sm:mx-12" variant="h6">
+							Дата: {time}
+						</Typography>
 					</FuseAnimate>
 				</ThemeProvider>
 			</div>

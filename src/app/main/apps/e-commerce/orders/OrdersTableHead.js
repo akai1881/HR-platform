@@ -17,52 +17,38 @@ import React, { useState } from 'react';
 
 const rows = [
 	{
-		id: 'id',
+		id: 'name',
 		align: 'left',
 		disablePadding: false,
-		label: 'ID',
+		label: 'Имя',
 		sort: true
 	},
 	{
-		id: 'reference',
+		id: 'phone',
 		align: 'left',
 		disablePadding: false,
-		label: 'Reference',
+		label: 'Телефон',
 		sort: true
 	},
 	{
-		id: 'customer',
+		id: 'department',
 		align: 'left',
 		disablePadding: false,
-		label: 'Customer',
+		label: 'Отдел',
 		sort: true
 	},
 	{
-		id: 'total',
-		align: 'right',
-		disablePadding: false,
-		label: 'Total',
-		sort: true
-	},
-	{
-		id: 'payment',
+		id: 'isLate',
 		align: 'left',
 		disablePadding: false,
-		label: 'Payment',
-		sort: true
-	},
-	{
-		id: 'status',
-		align: 'left',
-		disablePadding: false,
-		label: 'Status',
+		label: 'Приход',
 		sort: true
 	},
 	{
 		id: 'date',
 		align: 'left',
 		disablePadding: false,
-		label: 'Date',
+		label: 'Время',
 		sort: true
 	}
 ];
@@ -94,48 +80,6 @@ function OrdersTableHead(props) {
 	return (
 		<TableHead>
 			<TableRow className="h-64">
-				<TableCell padding="none" className="w-40 md:w-64 text-center z-99">
-					<Checkbox
-						indeterminate={props.numSelected > 0 && props.numSelected < props.rowCount}
-						checked={props.numSelected === props.rowCount}
-						onChange={props.onSelectAllClick}
-					/>
-					{props.numSelected > 0 && (
-						<div
-							className={clsx(
-								'flex items-center justify-center absolute w-64 top-0 ltr:left-0 rtl:right-0 mx-56 h-64 z-10 border-b-1',
-								classes.actionsButtonWrapper
-							)}
-						>
-							<IconButton
-								aria-owns={selectedOrdersMenu ? 'selectedOrdersMenu' : null}
-								aria-haspopup="true"
-								onClick={openSelectedOrdersMenu}
-							>
-								<Icon>more_horiz</Icon>
-							</IconButton>
-							<Menu
-								id="selectedOrdersMenu"
-								anchorEl={selectedOrdersMenu}
-								open={Boolean(selectedOrdersMenu)}
-								onClose={closeSelectedOrdersMenu}
-							>
-								<MenuList>
-									<MenuItem
-										onClick={() => {
-											closeSelectedOrdersMenu();
-										}}
-									>
-										<ListItemIcon className="min-w-40">
-											<Icon>delete</Icon>
-										</ListItemIcon>
-										<ListItemText primary="Remove" />
-									</MenuItem>
-								</MenuList>
-							</Menu>
-						</div>
-					)}
-				</TableCell>
 				{rows.map(row => {
 					return (
 						<TableCell
