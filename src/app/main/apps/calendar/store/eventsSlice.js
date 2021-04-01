@@ -1,4 +1,4 @@
-import { createEntityAdapter, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {createAsyncThunk, createEntityAdapter, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import moment from 'moment';
 import firebaseService from 'app/services/firebaseService/firebaseService';
@@ -15,9 +15,10 @@ export const getEvents = createAsyncThunk('calendarApp/events/getEvents', async 
 export const getEmployeeShifts = createAsyncThunk('calendarApp/events/getEmployeeShifts', async () => {
 	const shiftsRef = await firebaseService.database.collection('shifts').get();
 
-	const shiftsData = await shiftsRef.docs.map(doc => ({ ...doc.data() }));
-
-	return shiftsData;
+  return shiftsRef.docs.map(doc => ({
+    ...doc.data(),
+    time: doc.data().time.toDate().toJSON()
+  }));
 
 	// const usersRef = await shiftsRef.collection('users').get();
 

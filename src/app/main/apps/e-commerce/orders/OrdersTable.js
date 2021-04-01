@@ -7,184 +7,303 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams, withRouter } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useParams, withRouter} from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import OrdersStatus from '../order/OrdersStatus';
-import { selectOrders, getOrders, getUsersData } from '../store/ordersSlice';
+import {selectOrders, getOrders, getUsersData} from '../store/ordersSlice';
 import OrdersTableHead from './OrdersTableHead';
-import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
+import {LocalConvenienceStoreOutlined} from '@material-ui/icons';
+import {getTodayData} from "../store/helpers/functions";
+import {Menu, MenuItem} from "@material-ui/core";
+import {getDepartments} from "../../contacts/store/contactsSlice";
+import Typography from "@material-ui/core/Typography";
 
 function OrdersTable(props) {
-	const dispatch = useDispatch();
-	const orders = useSelector(({ eCommerceApp }) => eCommerceApp.orders.users);
-	// const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
-	const params = useParams();
-	const [loading, setLoading] = useState(true);
-	const [selected, setSelected] = useState([]);
-	const [data, setData] = useState([]);
-	const [users, setUsers] = useState(null);
-	const [page, setPage] = useState(0);
-	const [time, setTime] = useState(new Date());
-	const [rowsPerPage, setRowsPerPage] = useState(10);
-	const [order, setOrder] = useState({
-		direction: 'asc',
-		id: null
-	});
+  const dispatch = useDispatch();
+  const orders = useSelector(({eCommerceApp}) => eCommerceApp.orders.users);
+  // const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
+  const params = useParams();
+  const departments = useSelector(({eCommerceApp}) => eCommerceApp.contacts.departments);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState([]);
+  const [data, setData] = useState([]);
+  const [users, setUsers] = useState(null);
+  const [page, setPage] = useState(0);
+  const [time, setTime] = useState(new Date());
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [order, setOrder] = useState({
+    direction: 'asc',
+    id: null
+  });
 
-	useEffect(() => {
-		// dispatch(getOrders()).then(() => setLoading(false));
-		dispatch(getUsersData(params.dayId));
-	}, [dispatch]);
+  useEffect(() => {
+    // dispatch(getOrders()).then(() => setLoading(false));
+    dispatch(getUsersData(params.dayId));
+    dispatch(getDepartments());
+  }, [dispatch]);
 
-	useEffect(() => {
-		// if (searchText.length !== 0) {
-		// 	setData(FuseUtils.filterArrayByString(orders, searchText));
-		// 	setPage(0);
-		// } else {
-		// }
-		if (orders.length > 0) {
-			setLoading(false);
-		}
-		console.log('this is orders', orders);
-	}, [orders]);
+  useEffect(() => {
+    // if (searchText.length !== 0) {
+    // 	setData(FuseUtils.filterArrayByString(orders, searchText));
+    // 	setPage(0);
+    // } else {
+    // }
+    if (orders.length > 0) {
+      setLoading(false);
+      setFilteredData(orders);
+    }
+    console.log('this is orders', orders);
+  }, [orders]);
 
-	function handleRequestSort(event, property) {
-		const id = property;
-		let direction = 'desc';
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  }
 
-		if (order.id === property && order.direction === 'desc') {
-			direction = 'asc';
-		}
+  function handleClose() {
+    setAnchorEl(null);
+  }
 
-		setOrder({
-			direction,
-			id
-		});
-	}
+  function filterByDepartment(event) {
+    const name = event.target.dataset.name;
 
-	function handleSelectAllClick(event) {
-		if (event.target.checked) {
-			setSelected(data.map(n => n.id));
-			return;
-		}
-		setSelected([]);
-	}
+    if (name === 'all') {
+      setFilteredData(orders);
+      handleClose();
+      return;
+    }
 
-	function formatTimes(date) {
-		return new Date(date).toLocaleTimeString();
-	}
+    const data = orders.filter(item => item.department === name);
+    setFilteredData(data);
+    handleClose();
+  }
 
-	function handleClick(item) {
-		props.history.push(`/pages/profile/${item.id}`);
-	}
 
-	function handleCheck(event, id) {
-		const selectedIndex = selected.indexOf(id);
-		let newSelected = [];
+  function handleRequestSort(event, property) {
+    console.log(event, property);
+    const id = property;
 
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, id);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-		}
+    if (property === 'department') {
+      setAnchorEl(event.currentTarget);
+      return;
+    }
 
-		setSelected(newSelected);
-	}
+    let direction = 'desc';
 
-	function handleChangePage(event, value) {
-		setPage(value);
-	}
+    if (order.id === property && order.direction === 'desc') {
+      direction = 'asc';
+    }
 
-	function handleChangeRowsPerPage(event) {
-		setRowsPerPage(event.target.value);
-	}
+    setOrder({
+      direction,
+      id
+    });
+  }
 
-	if (loading) {
-		return <FuseLoading />;
-	}
+  function handleSelectAllClick(event) {
+    if (event.target.checked) {
+      setSelected(data.map(n => n.id));
+      return;
+    }
+    setSelected([]);
+  }
 
-	return (
-		<div className="w-full flex flex-col">
-			<FuseScrollbars className="flex-grow overflow-x-auto">
-				{orders.length > 0 ? (
-					<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
-						<OrdersTableHead
-							numSelected={selected.length}
-							order={order}
-							onSelectAllClick={handleSelectAllClick}
-							onRequestSort={handleRequestSort}
-							rowCount={orders.length}
-						/>
+  function formatTimes(date) {
+    return new Date(date).toLocaleTimeString();
+  }
 
-						<TableBody>
-							{orders.map(n => {
-								const isSelected = selected.indexOf(n.id) !== -1;
-								console.log(n.firstName);
-								return (
-									<TableRow
-										className="h-64 cursor-pointer"
-										hover
-										role="checkbox"
-										aria-checked={isSelected}
-										tabIndex={-1}
-										key={n.id}
-										selected={isSelected}
-										onClick={event => handleClick(n)}
-									>
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.firstName} {n.lastName}
-										</TableCell>
+  function handleRedirect(item) {
+    props.history.push(`/pages/profile/${item.id}`);
+  }
 
-										{/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+  function handleCheck(event, id) {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    }
+
+    setSelected(newSelected);
+  }
+
+  function handleChangePage(event, value) {
+    setPage(value);
+  }
+
+  function handleChangeRowsPerPage(event) {
+    setRowsPerPage(event.target.value);
+  }
+
+  function handleStatus(e) {
+    e.preventDefault();
+    console.log('clicked');
+  }
+
+  if (loading) {
+    return <FuseLoading/>;
+  }
+
+  return (
+    <div className="w-full flex flex-col">
+      <FuseScrollbars className="flex-grow overflow-x-auto">
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={filterByDepartment} data-name="all">Все</MenuItem>
+          {departments && departments.map(department => (
+            <MenuItem onClick={filterByDepartment} data-name={department.name}
+                      key={department.id}>{department.name}</MenuItem>
+          ))}
+        </Menu>
+        {orders.length > 0 ? (
+          <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
+            <OrdersTableHead
+              numSelected={selected.length}
+              order={order}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={orders.length}
+            />
+
+            <TableBody>
+              {_.orderBy(
+                filteredData,
+                [
+                  o => {
+                    switch (order.id) {
+                      case 'isLate': {
+                        return o.isLate;
+                      }
+                      case 'date': {
+                        return o.date;
+                      }
+                      default: {
+                        return o[order.id];
+                      }
+                    }
+                  }
+                ],
+                [order.direction]
+              ).map(n => {
+                const isSelected = selected.indexOf(n.id) !== -1;
+                console.log(n.firstName);
+                return (
+                  <TableRow
+                    className="h-64 cursor-pointer"
+                    hover
+                    role="checkbox"
+                    aria-checked={isSelected}
+                    tabIndex={-1}
+                    key={n.id}
+                    selected={isSelected}
+                    onClick={event => handleRedirect(n)}
+                  >
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n.firstName} {n.lastName}
+                    </TableCell>
+
+                    {/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
 											{n.lastName}
 										</TableCell> */}
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.phone}
-										</TableCell>
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n.phone}
+                    </TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.department}
-										</TableCell>
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n.department}
+                    </TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											<OrdersStatus name={n.isLate} />
-										</TableCell>
+                    <TableCell className="p-4 md:p-16" component="th" scope="row" onClick={handleStatus}>
+                      <OrdersStatus name={n.isLate}/>
+                    </TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.date.slice(0, 10).split('-').reverse().join('-')} {formatTimes(n.date)}
-										</TableCell>
-									</TableRow>
-								);
-							})}
-						</TableBody>
-					</Table>
-				) : null}
-			</FuseScrollbars>
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n.time} | {n.date}
+                    </TableCell>
+                  </TableRow>);
+              })}
+            </TableBody>
+          </Table>
+        ) : null}
+      </FuseScrollbars>
 
-			<TablePagination
-				className="flex-shrink-0 border-t-1"
-				component="div"
-				count={orders.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				backIconButtonProps={{
-					'aria-label': 'Previous Page'
-				}}
-				nextIconButtonProps={{
-					'aria-label': 'Next Page'
-				}}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
-		</div>
-	);
+      <TablePagination
+        className="flex-shrink-0 border-t-1"
+        component="div"
+        count={orders.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        backIconButtonProps={{
+          'aria-label': 'Previous Page'
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'Next Page'
+        }}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </div>
+  );
 }
 
 export default withRouter(OrdersTable);
+
+// {filteredData.length > 0 ? filteredData.map(n => {
+//   const isSelected = selected.indexOf(n.id) !== -1;
+//   console.log(n.firstName);
+//   return (
+//     <TableRow
+//       className="h-64 cursor-pointer"
+//       hover
+//       role="checkbox"
+//       aria-checked={isSelected}
+//       tabIndex={-1}
+//       key={n.id}
+//       selected={isSelected}
+//       onClick={event => handleRedirect(n)}
+//     >
+//       <TableCell className="p-4 md:p-16" component="th" scope="row">
+//         {n.firstName} {n.lastName}
+//       </TableCell>
+//
+//       {/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+// 											{n.lastName}
+// 										</TableCell> */}
+//
+//       <TableCell className="p-4 md:p-16" component="th" scope="row">
+//         {n.phone}
+//       </TableCell>
+//
+//       <TableCell className="p-4 md:p-16" component="th" scope="row">
+//         {n.department}
+//       </TableCell>
+//
+//       <TableCell className="p-4 md:p-16" component="th" scope="row">
+//         <OrdersStatus name={n.isLate}/>
+//       </TableCell>
+//
+//       <TableCell className="p-4 md:p-16" component="th" scope="row">
+//         {n.time} | {n.date}
+//       </TableCell>
+//     </TableRow>
+//   );
+// }) : (
+//   <Typography color="textSecondary" variant="h5" align="center">
+//     Сотрудники отсутвуют
+//   </Typography>
+// )}
