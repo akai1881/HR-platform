@@ -170,7 +170,6 @@ function Product(props) {
 	const user = useSelector(({ eCommerceApp }) => eCommerceApp.product.user);
 	const loader = useSelector(({ eCommerceApp }) => eCommerceApp.product.loading);
 	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
-	const authedUser = useSelector(({ auth }) => auth.user);
 	const theme = useTheme();
 	const [selectedDate, handleDateChange] = useState(new Date());
 	const classes = useStyles(props);

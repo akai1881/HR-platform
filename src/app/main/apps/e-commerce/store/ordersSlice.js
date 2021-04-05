@@ -21,8 +21,9 @@ export const getUsersData = createAsyncThunk('eCommerceApp/orders/getUsersData',
 
 	const usersData = await usersRef.docs.map(doc => ({
 		...doc.data(),
-		time: moment(doc.data().date.toDate()).format('h:mm a'),
-		date: getTodayData(doc.data().date.toDate()),
+		date: moment(doc.data().date.toDate()).format('h:mm a'),
+		time: doc.data().date.toDate(),
+		dueTime: moment(doc.data().dueTime.toDate()).format('h:mm a'),
 		id: doc.data().uid
 	}));
 
@@ -30,6 +31,13 @@ export const getUsersData = createAsyncThunk('eCommerceApp/orders/getUsersData',
 
 	return usersData;
 });
+
+export const changeUserStatus = createAsyncThunk('eCommerceApp/orders/changeUserStatus', async (data, {dispatch}) => {
+	const {dayId, userId, userData} = data;
+	return firebaseService.database.doc(`/shifts/${dayId}/users/${userId}`).update({
+		userData
+	}).then(() => dispatch(getUsersData(dayId)))
+})
 
 export const getTime = createAsyncThunk('eCommerceApp/orders/getTime', async params => {
 	let time;
@@ -64,7 +72,8 @@ const ordersSlice = createSlice({
 	name: 'eCommerceApp/orders',
 	initialState: {
 		users: [],
-		time: ''
+		time: '',
+		timeDialog: null
 	},
 	reducers: {
 		setOrdersSearchText: {
@@ -72,7 +81,25 @@ const ordersSlice = createSlice({
 				state.searchText = action.payload;
 			},
 			prepare: event => ({ payload: event.target.value || '' })
-		}
+		},
+		openEditTimeDialog: (state, action) => {
+			state.timeDialog = {
+				type: 'edit',
+				props: {
+					open: true
+				},
+				data: action.payload
+			};
+		},
+		closeEditTimeDialog: (state, action) => {
+			state.timeDialog = {
+				type: 'edit',
+				props: {
+					open: false
+				},
+				data: null
+			};
+		},
 	},
 	extraReducers: {
 		// [getOrders.fulfilled]: ordersAdapter.setAll,
@@ -85,6 +112,6 @@ const ordersSlice = createSlice({
 	}
 });
 
-export const { setOrdersSearchText } = ordersSlice.actions;
+export const { setOrdersSearchText, closeEditTimeDialog, openEditTimeDialog } = ordersSlice.actions;
 
 export default ordersSlice.reducer;

@@ -1,7 +1,5 @@
 import FuseScrollbars from '@fuse/core/FuseScrollbars';
-import FuseUtils from '@fuse/utils';
 import _ from '@lodash';
-import Checkbox from '@material-ui/core/Checkbox';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,19 +10,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, withRouter } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import OrdersStatus from '../order/OrdersStatus';
-import { selectOrders, getOrders, getUsersData, changeStatus } from '../store/ordersSlice';
+import { changeUserStatus, getUsersData } from '../store/ordersSlice';
 import OrdersTableHead from './OrdersTableHead';
-import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
-import { getTodayData } from '../store/helpers/functions';
-import { Menu, MenuItem } from '@material-ui/core';
+import { DialogActions, DialogContent, DialogTitle, Menu, MenuItem } from '@material-ui/core';
 import { getDepartments } from '../../contacts/store/contactsSlice';
-import Typography from '@material-ui/core/Typography';
+import { closeDialog, openDialog } from '../../../../store/fuse/dialogSlice';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import { openEditTimeDialog, closeEditTimeDialog} from '../store/ordersSlice';
+
+import Button from '@material-ui/core/Button';
 
 function OrdersTable(props) {
 	const dispatch = useDispatch();
 	const orders = useSelector(({ eCommerceApp }) => eCommerceApp.orders.users);
-	// const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
-	const params = useParams();
+	const {dayId} = useParams();
 	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
 	const [loading, setLoading] = useState(true);
 	const [selected, setSelected] = useState([]);
@@ -44,7 +43,7 @@ function OrdersTable(props) {
 
 	useEffect(() => {
 		// dispatch(getOrders()).then(() => setLoading(false));
-		dispatch(getUsersData(params.dayId));
+		dispatch(getUsersData(dayId));
 		dispatch(getDepartments());
 	}, [dispatch]);
 
@@ -116,20 +115,12 @@ function OrdersTable(props) {
 		setSelected([]);
 	}
 
-	function changeStatus(e) {
-		// console.log(e.target.dataset.status);
-		const status = e.target.name;
-		console.log(status);
-		dispatch(changeStatus(status, id, params.dayId));
-		// handleClose2();
-	}
-
 	function formatTimes(date) {
 		return new Date(date).toLocaleTimeString();
 	}
 
-	function handleRedirect(item) {
-		props.history.push(`/pages/profile/${item.id}`);
+	function handleRedirect(id) {
+		props.history.push(`/pages/profile/${id}`);
 	}
 
 	function handleCheck(event, id) {
@@ -157,10 +148,15 @@ function OrdersTable(props) {
 		setRowsPerPage(event.target.value);
 	}
 
-	function handleStatus(e, id) {
+	function handleClickStatus(e,id) {
 		e.stopPropagation();
+		setId(id)
 		setAnchorEl2(e.currentTarget);
-		setId(id);
+	}
+
+	function changeStatus (e) {
+		const data = e.target.dataset.name;
+
 	}
 
 	if (loading) {
@@ -168,20 +164,20 @@ function OrdersTable(props) {
 	}
 
 	return (
-		<div className="w-full flex flex-col">
-			<FuseScrollbars className="flex-grow overflow-x-auto">
-				<Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-					<MenuItem onClick={filterByDepartment} data-name="all">
+		<div className='w-full flex flex-col'>
+			<FuseScrollbars className='flex-grow overflow-x-auto'>
+				<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+					<MenuItem onClick={filterByDepartment} data-name='all'>
 						Все
 					</MenuItem>
 					{departments &&
-						departments.map(department => (
-							<MenuItem onClick={filterByDepartment} data-name={department.name} key={department.id}>
-								{department.name}
-							</MenuItem>
-						))}
+					departments.map(department => (
+						<MenuItem onClick={filterByDepartment} data-name={department.name} key={department.id}>
+							{department.name}
+						</MenuItem>
+					))}
 				</Menu>
-				{/* <Menu
+				<Menu
 					id="simple-men2"
 					anchorEl={anchorEl2}
 					keepMounted
@@ -191,12 +187,12 @@ function OrdersTable(props) {
 					<MenuItem onClick={changeStatus} name="false" data-name="false">
 						Во время
 					</MenuItem>
-					<MenuItem onClick={changeStatus} name="true" data-name="false">
+					<MenuItem onClick={changeStatus} name="true" data-name="true">
 						Опоздал
 					</MenuItem>
-				</Menu> */}
+				</Menu>
 				{orders.length > 0 ? (
-					<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
+					<Table stickyHeader className='min-w-xl' aria-labelledby='tableTitle'>
 						<OrdersTableHead
 							numSelected={selected.length}
 							order={order}
@@ -229,47 +225,43 @@ function OrdersTable(props) {
 								// console.log(n.firstName);
 								return (
 									<TableRow
-										className="h-64 cursor-pointer"
+										className='h-64 cursor-pointer'
 										hover
-										role="checkbox"
+										role='checkbox'
 										aria-checked={isSelected}
 										tabIndex={-1}
 										key={n.id}
 										selected={isSelected}
-										onClick={event => handleRedirect(n)}
+										onClick={() => handleRedirect(n.id)}
 									>
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
+										<TableCell className='p-4 md:p-16' component='th' scope='row'>
 											{n.firstName} {n.lastName}
 										</TableCell>
 
-										{/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-											{n.lastName}
-										</TableCell> */}
-
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
+										<TableCell className='p-4 md:p-16' component='th' scope='row'>
 											{n.phone}
 										</TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
+										<TableCell className='p-4 md:p-16' component='th' scope='row'>
 											{n.department}
 										</TableCell>
 
 										<TableCell
-											className="p-4 md:p-16"
-											component="th"
-											scope="row"
+											className='p-4 md:p-16'
+											component='th'
+											scope='row'
 											data-value={n.id}
-											onClick={e => handleStatus(e, n.id)}
+											onClick={e => handleClickStatus(e, n.id)}
 										>
 											<OrdersStatus name={n.isLate} />
-											{n.minutesLate && ` на ${n.minutesLate} мин.`}
+											{!!n.minutesLate && ` на ${n.minutesLate} мин.`}
 										</TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
-											{n.time} | {n.date}
+										<TableCell className='p-4 md:p-16' component='th' scope='row'>
+											{n.date}
 										</TableCell>
 
-										<TableCell className="p-4 md:p-16" component="th" scope="row">
+										<TableCell className='p-4 md:p-16' component='th' scope='row'>
 											{n.dueTime}
 										</TableCell>
 									</TableRow>
@@ -281,8 +273,8 @@ function OrdersTable(props) {
 			</FuseScrollbars>
 
 			<TablePagination
-				className="flex-shrink-0 border-t-1"
-				component="div"
+				className='flex-shrink-0 border-t-1'
+				component='div'
 				count={orders.length}
 				rowsPerPage={rowsPerPage}
 				page={page}

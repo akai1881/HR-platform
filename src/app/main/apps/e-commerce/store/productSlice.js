@@ -32,17 +32,16 @@ export const getUserData = createAsyncThunk('eCommerceApp/product/getUserData', 
 			...doc.data()
 		};
 	});
-	const userData = await userRef.get().then(doc => doc.data());
 
-	const user = {
-		...userData,
+	const userData = await userRef.get().then(doc => ({
+		...doc.data(),
 		id: userId,
 		projects: projectsData,
-		dueTime: userData.dueTime.toDate(),
+		dueTime: doc.data().dueTime.toDate(),
 		career: careerData
-	};
+	}));
 
-	return user;
+	return userData;
 });
 
 export const saveProduct = createAsyncThunk('eCommerceApp/product/saveProduct', async product => {

@@ -19,10 +19,7 @@ import reducer from './store';
 import {
   selectEvents,
   openNewEventDialog,
-  openEditEventDialog,
   getEmployeeShifts,
-  updateEvent,
-  getEvents
 } from './store/eventsSlice';
 
 const localizer = momentLocalizer(moment);
@@ -214,26 +211,26 @@ function CalendarApp(props) {
     history.push(`/apps/employee/shifts/${id}`);
   }
 
-  function moveEvent({event, start, end}) {
-    dispatch(
-      updateEvent({
-        ...event,
-        start,
-        end
-      })
-    );
-  }
+  // function moveEvent({event, start, end}) {
+  //   dispatch(
+  //     updateEvent({
+  //       ...event,
+  //       start,
+  //       end
+  //     })
+  //   );
+  // }
 
-  function resizeEvent({event, start, end}) {
-    delete event.type;
-    dispatch(
-      updateEvent({
-        ...event,
-        start,
-        end
-      })
-    );
-  }
+  // function resizeEvent({event, start, end}) {
+  //   delete event.type;
+  //   dispatch(
+  //     updateEvent({
+  //       ...event,
+  //       start,
+  //       end
+  //     })
+  //   );
+  // }
 
   return (
     <div className={clsx(classes.root, 'flex flex-col flex-auto relative')}>
