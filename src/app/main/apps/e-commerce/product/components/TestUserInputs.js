@@ -4,6 +4,7 @@ import { FormControl, InputLabel, MenuItem, TextField, Select, OutlinedInput } f
 import ReactHookFormSelect from './ReactHookFormSelect';
 import { firstColumn, secondColumn } from './../constants';
 import { useSelector } from 'react-redux';
+import { TimePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles(theme => ({
 	inputCol: {
@@ -21,7 +22,17 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function TestUserInputs({ register, values, control, departments, setDepartment, params, errors }) {
+function TestUserInputs({
+	register,
+	values,
+	control,
+	departments,
+	setDepartment,
+	params,
+	errors,
+	handleDateChange,
+	selectedDate
+}) {
 	const classes = useStyles();
 	const [editData, setEditData] = useState(values);
 	const userRole = useSelector(({ auth }) => auth.user.role);
@@ -110,6 +121,21 @@ function TestUserInputs({ register, values, control, departments, setDepartment,
 									</MenuItem>
 								))}
 							</ReactHookFormSelect>
+						);
+					}
+
+					if (item.name === 'dueTime' && item.type === 'date') {
+						return (
+							<TimePicker
+								clearable
+								ampm={true}
+								name={item.name}
+								className={classes.inputField}
+								// label="24 hours"
+								inputVariant="outlined"
+								value={selectedDate}
+								onChange={handleDateChange}
+							/>
 						);
 					}
 

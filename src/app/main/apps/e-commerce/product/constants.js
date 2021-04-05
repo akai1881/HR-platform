@@ -108,6 +108,12 @@ export const firstColumn = [
 		name: 'phone3',
 		label: 'Телефон 3',
 		type: 'text'
+	},
+	{
+		id: 'dueTime',
+		name: 'dueTime',
+		label: 'Расписание',
+		type: 'date'
 	}
 ];
 

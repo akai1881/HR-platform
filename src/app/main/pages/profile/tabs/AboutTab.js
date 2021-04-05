@@ -77,6 +77,12 @@ function AboutTab({ user, profileId, authedUser }) {
 								</div>
 
 								<div className="mb-24">
+									<Typography className="font-bold mb-4 text-15">Дата рождения</Typography>
+
+									<Typography>{user.birthday}</Typography>
+								</div>
+
+								<div className="mb-24">
 									<Typography className="font-bold mb-4 text-15">Семейное положение</Typography>
 									<Typography>{user.maritalStatus}</Typography>
 								</div>

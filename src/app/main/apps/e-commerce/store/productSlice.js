@@ -33,12 +33,12 @@ export const getUserData = createAsyncThunk('eCommerceApp/product/getUserData', 
 		};
 	});
 	const userData = await userRef.get().then(doc => doc.data());
-	const id = await userRef.get().then(doc => doc.id);
 
 	const user = {
 		...userData,
-		id,
+		id: userId,
 		projects: projectsData,
+		dueTime: userData.dueTime.toDate(),
 		career: careerData
 	};
 

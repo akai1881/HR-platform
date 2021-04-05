@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@material-ui/core';
+import { TimePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles(theme => ({
 	inputCol: {
@@ -77,10 +78,16 @@ const inputs = [
 		type: 'text'
 	},
 	{
-		id: 'phone3',
-		name: 'phone3',
-		label: 'Телефон 3',
+		id: 'phone2',
+		name: 'phone2',
+		label: 'Телефон 2',
 		type: 'text'
+	},
+	{
+		id: 'dueTime',
+		name: 'dueTime',
+		label: 'Время прихода',
+		type: 'date'
 	},
 	{
 		id: 'email',
@@ -216,6 +223,10 @@ function UserInputs({ values, onChange }) {
 								</Select>
 							</FormControl>
 						);
+
+					if (item.type === 'date') {
+						return <TimePicker clearable ampm={false} label="24 hours" name={item.name} />;
+					}
 
 					return (
 						<TextField

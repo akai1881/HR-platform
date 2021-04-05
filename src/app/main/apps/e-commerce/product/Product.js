@@ -172,7 +172,9 @@ function Product(props) {
 	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
 	const authedUser = useSelector(({ auth }) => auth.user);
 	const theme = useTheme();
+	const [selectedDate, handleDateChange] = useState(new Date());
 	const classes = useStyles(props);
+
 	const [tabValue, setTabValue] = useState(0);
 	const [image, setImage] = useState('');
 	const { register, handleSubmit, control, errors } = useForm({
@@ -218,6 +220,7 @@ function Product(props) {
 			setSavedValues(user);
 			setProjects(user.projects);
 			setCareer(user.career);
+			handleDateChange(user.dueTime);
 			setAvatarFile(user.avatarFile);
 			console.log('THIS IS LOADER', loader);
 			setUserDepartment(user.department);
@@ -235,6 +238,7 @@ function Product(props) {
 		const userData = {
 			...data,
 			avatarFile,
+			dueTime: new Date(selectedDate),
 			department: {
 				id: userDepartment.id,
 				name: userDepartment.name
@@ -244,14 +248,16 @@ function Product(props) {
 			career
 		};
 		console.log('THIS IS ADD USER', userData);
-		dispatch(registerUser(userData));
-		history.push('/apps/contacts/all');
+		// dispatch(registerUser(userData));
+		// history.push('/apps/contacts/all');
 	}
 
 	async function editUser(data) {
+		// console.log(selectedDate.toLocaleTimeString());
 		const userData = {
 			...data,
 			avatarFile,
+			dueTime: new Date(selectedDate),
 			department: {
 				id: userDepartment.id,
 				name: userDepartment.name
@@ -261,7 +267,7 @@ function Product(props) {
 			career
 		};
 
-		// console.log('THIS IS DATA', userData);
+		console.log('THIS IS DATA', userData);
 		await dispatch(editUserData(userData));
 		await history.push('/apps/contacts/all');
 	}
@@ -450,6 +456,8 @@ function Product(props) {
 										setDepartment={setUserDepartment}
 										params={userId}
 										control={control}
+										selectedDate={selectedDate}
+										handleDateChange={handleDateChange}
 										departments={departments}
 										errors={errors}
 									/>

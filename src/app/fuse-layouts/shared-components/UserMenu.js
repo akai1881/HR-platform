@@ -23,7 +23,9 @@ function UserMenu(props) {
 		setUserMenu(event.currentTarget);
 	};
 
-	React.useEffect(() => {}, []);
+	React.useEffect(() => {
+		console.log(user.avatarFile);
+	}, []);
 
 	const userMenuClose = () => {
 		setUserMenu(null);
@@ -48,7 +50,7 @@ function UserMenu(props) {
 						alt="user photo"
 						className="bg-transparent border-1 border-gray-50 w-60 h-60 p-1"
 					>
-						<img src={user.data.photoURL} className="" alt="" />
+						<img src={user.avatarFile} className="" alt="" />
 					</Avatar>
 				) : (
 					<Avatar className="md:mx-4">

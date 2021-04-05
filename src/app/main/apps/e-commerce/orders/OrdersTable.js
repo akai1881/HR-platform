@@ -7,258 +7,296 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useParams, withRouter} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, withRouter } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import OrdersStatus from '../order/OrdersStatus';
-import {selectOrders, getOrders, getUsersData} from '../store/ordersSlice';
+import { selectOrders, getOrders, getUsersData, changeStatus } from '../store/ordersSlice';
 import OrdersTableHead from './OrdersTableHead';
-import {LocalConvenienceStoreOutlined} from '@material-ui/icons';
-import {getTodayData} from "../store/helpers/functions";
-import {Menu, MenuItem} from "@material-ui/core";
-import {getDepartments} from "../../contacts/store/contactsSlice";
-import Typography from "@material-ui/core/Typography";
+import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
+import { getTodayData } from '../store/helpers/functions';
+import { Menu, MenuItem } from '@material-ui/core';
+import { getDepartments } from '../../contacts/store/contactsSlice';
+import Typography from '@material-ui/core/Typography';
 
 function OrdersTable(props) {
-  const dispatch = useDispatch();
-  const orders = useSelector(({eCommerceApp}) => eCommerceApp.orders.users);
-  // const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
-  const params = useParams();
-  const departments = useSelector(({eCommerceApp}) => eCommerceApp.contacts.departments);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState([]);
-  const [data, setData] = useState([]);
-  const [users, setUsers] = useState(null);
-  const [page, setPage] = useState(0);
-  const [time, setTime] = useState(new Date());
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [filteredData, setFilteredData] = useState(null);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = useState({
-    direction: 'asc',
-    id: null
-  });
+	const dispatch = useDispatch();
+	const orders = useSelector(({ eCommerceApp }) => eCommerceApp.orders.users);
+	// const searchText = useSelector(({ eCommerceApp }) => eCommerceApp.orders.searchText);
+	const params = useParams();
+	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
+	const [loading, setLoading] = useState(true);
+	const [selected, setSelected] = useState([]);
+	const [data, setData] = useState([]);
+	const [users, setUsers] = useState(null);
+	const [page, setPage] = useState(0);
+	const [time, setTime] = useState(new Date());
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [anchorEl2, setAnchorEl2] = useState(null);
+	const [filteredData, setFilteredData] = useState(null);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [id, setId] = useState('');
+	const [order, setOrder] = useState({
+		direction: 'asc',
+		id: null
+	});
 
-  useEffect(() => {
-    // dispatch(getOrders()).then(() => setLoading(false));
-    dispatch(getUsersData(params.dayId));
-    dispatch(getDepartments());
-  }, [dispatch]);
+	useEffect(() => {
+		// dispatch(getOrders()).then(() => setLoading(false));
+		dispatch(getUsersData(params.dayId));
+		dispatch(getDepartments());
+	}, [dispatch]);
 
-  useEffect(() => {
-    // if (searchText.length !== 0) {
-    // 	setData(FuseUtils.filterArrayByString(orders, searchText));
-    // 	setPage(0);
-    // } else {
-    // }
-    if (orders.length > 0) {
-      setLoading(false);
-      setFilteredData(orders);
-    }
-    console.log('this is orders', orders);
-  }, [orders]);
+	useEffect(() => {
+		// if (searchText.length !== 0) {
+		// 	setData(FuseUtils.filterArrayByString(orders, searchText));
+		// 	setPage(0);
+		// } else {
+		// }
+		if (orders.length > 0) {
+			setLoading(false);
+			setFilteredData(orders);
+		}
+		console.log('this is orders', orders);
+	}, [orders]);
 
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-  }
+	function handleClick(event) {
+		setAnchorEl(event.currentTarget);
+	}
 
-  function handleClose() {
-    setAnchorEl(null);
-  }
+	function handleClose() {
+		setAnchorEl(null);
+	}
 
-  function filterByDepartment(event) {
-    const name = event.target.dataset.name;
+	function handleClose2() {
+		setAnchorEl2(null);
+	}
 
-    if (name === 'all') {
-      setFilteredData(orders);
-      handleClose();
-      return;
-    }
+	function filterByDepartment(event) {
+		const name = event.target.dataset.name;
 
-    const data = orders.filter(item => item.department === name);
-    setFilteredData(data);
-    handleClose();
-  }
+		if (name === 'all') {
+			setFilteredData(orders);
+			handleClose();
+			return;
+		}
 
+		const data = orders.filter(item => item.department === name);
+		setFilteredData(data);
+		handleClose();
+	}
 
-  function handleRequestSort(event, property) {
-    console.log(event, property);
-    const id = property;
+	function handleRequestSort(event, property) {
+		console.log(event, property);
+		const id = property;
 
-    if (property === 'department') {
-      setAnchorEl(event.currentTarget);
-      return;
-    }
+		if (property === 'department') {
+			setAnchorEl(event.currentTarget);
+			return;
+		}
 
-    let direction = 'desc';
+		let direction = 'desc';
 
-    if (order.id === property && order.direction === 'desc') {
-      direction = 'asc';
-    }
+		if (order.id === property && order.direction === 'desc') {
+			direction = 'asc';
+		}
 
-    setOrder({
-      direction,
-      id
-    });
-  }
+		setOrder({
+			direction,
+			id
+		});
+	}
 
-  function handleSelectAllClick(event) {
-    if (event.target.checked) {
-      setSelected(data.map(n => n.id));
-      return;
-    }
-    setSelected([]);
-  }
+	function handleSelectAllClick(event) {
+		if (event.target.checked) {
+			setSelected(data.map(n => n.id));
+			return;
+		}
+		setSelected([]);
+	}
 
-  function formatTimes(date) {
-    return new Date(date).toLocaleTimeString();
-  }
+	function changeStatus(e) {
+		// console.log(e.target.dataset.status);
+		const status = e.target.name;
+		console.log(status);
+		dispatch(changeStatus(status, id, params.dayId));
+		// handleClose2();
+	}
 
-  function handleRedirect(item) {
-    props.history.push(`/pages/profile/${item.id}`);
-  }
+	function formatTimes(date) {
+		return new Date(date).toLocaleTimeString();
+	}
 
-  function handleCheck(event, id) {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
+	function handleRedirect(item) {
+		props.history.push(`/pages/profile/${item.id}`);
+	}
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
+	function handleCheck(event, id) {
+		const selectedIndex = selected.indexOf(id);
+		let newSelected = [];
 
-    setSelected(newSelected);
-  }
+		if (selectedIndex === -1) {
+			newSelected = newSelected.concat(selected, id);
+		} else if (selectedIndex === 0) {
+			newSelected = newSelected.concat(selected.slice(1));
+		} else if (selectedIndex === selected.length - 1) {
+			newSelected = newSelected.concat(selected.slice(0, -1));
+		} else if (selectedIndex > 0) {
+			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+		}
 
-  function handleChangePage(event, value) {
-    setPage(value);
-  }
+		setSelected(newSelected);
+	}
 
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(event.target.value);
-  }
+	function handleChangePage(event, value) {
+		setPage(value);
+	}
 
-  function handleStatus(e) {
-    e.preventDefault();
-    console.log('clicked');
-  }
+	function handleChangeRowsPerPage(event) {
+		setRowsPerPage(event.target.value);
+	}
 
-  if (loading) {
-    return <FuseLoading/>;
-  }
+	function handleStatus(e, id) {
+		e.stopPropagation();
+		setAnchorEl2(e.currentTarget);
+		setId(id);
+	}
 
-  return (
-    <div className="w-full flex flex-col">
-      <FuseScrollbars className="flex-grow overflow-x-auto">
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={filterByDepartment} data-name="all">Все</MenuItem>
-          {departments && departments.map(department => (
-            <MenuItem onClick={filterByDepartment} data-name={department.name}
-                      key={department.id}>{department.name}</MenuItem>
-          ))}
-        </Menu>
-        {orders.length > 0 ? (
-          <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
-            <OrdersTableHead
-              numSelected={selected.length}
-              order={order}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={orders.length}
-            />
+	if (loading) {
+		return <FuseLoading />;
+	}
 
-            <TableBody>
-              {_.orderBy(
-                filteredData,
-                [
-                  o => {
-                    switch (order.id) {
-                      case 'isLate': {
-                        return o.isLate;
-                      }
-                      case 'date': {
-                        return o.date;
-                      }
-                      default: {
-                        return o[order.id];
-                      }
-                    }
-                  }
-                ],
-                [order.direction]
-              ).map(n => {
-                const isSelected = selected.indexOf(n.id) !== -1;
-                console.log(n.firstName);
-                return (
-                  <TableRow
-                    className="h-64 cursor-pointer"
-                    hover
-                    role="checkbox"
-                    aria-checked={isSelected}
-                    tabIndex={-1}
-                    key={n.id}
-                    selected={isSelected}
-                    onClick={event => handleRedirect(n)}
-                  >
-                    <TableCell className="p-4 md:p-16" component="th" scope="row">
-                      {n.firstName} {n.lastName}
-                    </TableCell>
+	return (
+		<div className="w-full flex flex-col">
+			<FuseScrollbars className="flex-grow overflow-x-auto">
+				<Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+					<MenuItem onClick={filterByDepartment} data-name="all">
+						Все
+					</MenuItem>
+					{departments &&
+						departments.map(department => (
+							<MenuItem onClick={filterByDepartment} data-name={department.name} key={department.id}>
+								{department.name}
+							</MenuItem>
+						))}
+				</Menu>
+				{/* <Menu
+					id="simple-men2"
+					anchorEl={anchorEl2}
+					keepMounted
+					open={Boolean(anchorEl2)}
+					onClose={handleClose2}
+				>
+					<MenuItem onClick={changeStatus} name="false" data-name="false">
+						Во время
+					</MenuItem>
+					<MenuItem onClick={changeStatus} name="true" data-name="false">
+						Опоздал
+					</MenuItem>
+				</Menu> */}
+				{orders.length > 0 ? (
+					<Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
+						<OrdersTableHead
+							numSelected={selected.length}
+							order={order}
+							onSelectAllClick={handleSelectAllClick}
+							onRequestSort={handleRequestSort}
+							rowCount={orders.length}
+						/>
 
-                    {/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+						<TableBody>
+							{_.orderBy(
+								filteredData,
+								[
+									o => {
+										switch (order.id) {
+											case 'isLate': {
+												return o.isLate;
+											}
+											case 'date': {
+												return o.date;
+											}
+											default: {
+												return o[order.id];
+											}
+										}
+									}
+								],
+								[order.direction]
+							).map(n => {
+								const isSelected = selected.indexOf(n.id) !== -1;
+								// console.log(n.firstName);
+								return (
+									<TableRow
+										className="h-64 cursor-pointer"
+										hover
+										role="checkbox"
+										aria-checked={isSelected}
+										tabIndex={-1}
+										key={n.id}
+										selected={isSelected}
+										onClick={event => handleRedirect(n)}
+									>
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.firstName} {n.lastName}
+										</TableCell>
+
+										{/* <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
 											{n.lastName}
 										</TableCell> */}
 
-                    <TableCell className="p-4 md:p-16" component="th" scope="row">
-                      {n.phone}
-                    </TableCell>
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.phone}
+										</TableCell>
 
-                    <TableCell className="p-4 md:p-16" component="th" scope="row">
-                      {n.department}
-                    </TableCell>
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.department}
+										</TableCell>
 
-                    <TableCell className="p-4 md:p-16" component="th" scope="row" onClick={handleStatus}>
-                      <OrdersStatus name={n.isLate}/>
-                    </TableCell>
+										<TableCell
+											className="p-4 md:p-16"
+											component="th"
+											scope="row"
+											data-value={n.id}
+											onClick={e => handleStatus(e, n.id)}
+										>
+											<OrdersStatus name={n.isLate} />
+											{n.minutesLate && ` на ${n.minutesLate} мин.`}
+										</TableCell>
 
-                    <TableCell className="p-4 md:p-16" component="th" scope="row">
-                      {n.time} | {n.date}
-                    </TableCell>
-                  </TableRow>);
-              })}
-            </TableBody>
-          </Table>
-        ) : null}
-      </FuseScrollbars>
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.time} | {n.date}
+										</TableCell>
 
-      <TablePagination
-        className="flex-shrink-0 border-t-1"
-        component="div"
-        count={orders.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        backIconButtonProps={{
-          'aria-label': 'Previous Page'
-        }}
-        nextIconButtonProps={{
-          'aria-label': 'Next Page'
-        }}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
-    </div>
-  );
+										<TableCell className="p-4 md:p-16" component="th" scope="row">
+											{n.dueTime}
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				) : null}
+			</FuseScrollbars>
+
+			<TablePagination
+				className="flex-shrink-0 border-t-1"
+				component="div"
+				count={orders.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				backIconButtonProps={{
+					'aria-label': 'Previous Page'
+				}}
+				nextIconButtonProps={{
+					'aria-label': 'Next Page'
+				}}
+				onChangePage={handleChangePage}
+				onChangeRowsPerPage={handleChangeRowsPerPage}
+			/>
+		</div>
+	);
 }
 
 export default withRouter(OrdersTable);

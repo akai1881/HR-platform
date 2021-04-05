@@ -11,7 +11,7 @@ export const orderStatuses = [
 	},
 	{
 		id: 2,
-		name: 'Опоздал',
+		name: 'Опоздал(а)',
 		isLate: true,
 		color: 'bg-red-700 text-white'
 	}

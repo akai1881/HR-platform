@@ -135,14 +135,14 @@ function ContactsSidebarContent(props) {
 									star
 								</Icon>
 								<ListItemText className="truncate" primary={`${dep.name}`} disableTypography />
-								<Fab
+								{/* <Fab
 									color="secondary"
 									aria-label="add"
 									onClick={e => handleEditClick(e, { name: dep.name, id: dep.id })}
 									className={`absolute right-0 ${classes.tooltip} z-999`}
 								>
 									<Icon style={{ fontSize: '1.9rem' }}>edit</Icon>
-								</Fab>
+								</Fab> */}
 							</ListItem>
 						))}
 				</List>
