@@ -1,4 +1,4 @@
-import ContactsAppConfig from './contacts/ContactsAppConfig';
+import ContactsAppConfig from './employees/ContactsAppConfig';
 import AnalyticsDashboardAppConfig from './dashboards/analytics/AnalyticsDashboardAppConfig';
 import ProjectDashboardAppConfig from './dashboards/project/ProjectDashboardAppConfig';
 import ECommerceAppConfig from './e-commerce/ECommerceAppConfig';

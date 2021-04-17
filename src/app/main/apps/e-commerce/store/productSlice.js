@@ -1,14 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import FuseUtils from '@fuse/utils';
 import firebaseService from 'app/services/firebaseService/firebaseService';
-import { saveToUserCollections, updateUserCollections, uploadFileToStore } from './helpers/functions';
+import { saveToUserCollections, updateUserCollections } from './helpers/functions';
 import config from 'app/services/firebaseService/firebaseServiceConfig';
 import firebase from 'firebase/app';
-import { createBrowserHistory } from 'history';
 import { getData } from 'app/main/apps/contacts/store/contactsSlice';
-
-const history = createBrowserHistory();
 
 export const getProduct = createAsyncThunk('eCommerceApp/product/getProduct', async params => {
 	const response = await axios.get('/api/e-commerce-app/product', { params });
@@ -27,6 +23,7 @@ export const getUserData = createAsyncThunk('eCommerceApp/product/getUserData', 
 			...doc.data()
 		};
 	});
+
 	const projectsData = projectsRef.docs.map(doc => {
 		return {
 			...doc.data()
@@ -67,11 +64,11 @@ export const registerUser = createAsyncThunk('eCommerceApp/product/registerUser'
 					email,
 					id: user.uid,
 					uid: user.uid,
-					...rest
+					...re
 				});
 			await saveToUserCollections(projects, 'projects', user.uid);
 			await saveToUserCollections(career, 'career', user.uid);
-			secondaryApp.auth().signOut();
+			await secondaryApp.auth().signOut();
 			await dispatch(getData({ id: 'all' }));
 		});
 	await secondaryApp.delete();
