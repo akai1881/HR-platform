@@ -16,14 +16,14 @@ import { DialogActions, DialogContent, DialogTitle, Menu, MenuItem } from '@mate
 import { getDepartments } from '../../contacts/store/contactsSlice';
 import { closeDialog, openDialog } from '../../../../store/fuse/dialogSlice';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import { openEditTimeDialog, closeEditTimeDialog} from '../store/ordersSlice';
+import { openEditTimeDialog, closeEditTimeDialog } from '../store/ordersSlice';
 
 import Button from '@material-ui/core/Button';
 
 function OrdersTable(props) {
 	const dispatch = useDispatch();
 	const orders = useSelector(({ eCommerceApp }) => eCommerceApp.orders.users);
-	const {dayId} = useParams();
+	const { dayId } = useParams();
 	const departments = useSelector(({ eCommerceApp }) => eCommerceApp.contacts.departments);
 	const [loading, setLoading] = useState(true);
 	const [selected, setSelected] = useState([]);
@@ -73,7 +73,7 @@ function OrdersTable(props) {
 	}
 
 	function filterByDepartment(event) {
-		const name = event.target.dataset.name;
+		const { name } = event.target.dataset;
 
 		if (name === 'all') {
 			setFilteredData(orders);
@@ -123,6 +123,19 @@ function OrdersTable(props) {
 		props.history.push(`/pages/profile/${id}`);
 	}
 
+	function getUserShiftStatus(user) {
+		console.log(user);
+		if (!user.hasScanned) {
+			return 'Не сканировал(а)';
+		}
+
+		if (user.isLate) {
+			return 'Опоздал(а)';
+		}
+
+		return 'Во время';
+	}
+
 	function handleCheck(event, id) {
 		const selectedIndex = selected.indexOf(id);
 		let newSelected = [];
@@ -148,13 +161,13 @@ function OrdersTable(props) {
 		setRowsPerPage(event.target.value);
 	}
 
-	function handleClickStatus(e,id) {
+	function handleClickStatus(e, id) {
 		e.stopPropagation();
-		setId(id)
+		setId(id);
 		setAnchorEl2(e.currentTarget);
 	}
 
-	function changeStatus (e) {
+	function changeStatus(e) {
 		const data = e.target.dataset.name;
 
 	}
@@ -178,16 +191,16 @@ function OrdersTable(props) {
 					))}
 				</Menu>
 				<Menu
-					id="simple-men2"
+					id='simple-men2'
 					anchorEl={anchorEl2}
 					keepMounted
 					open={Boolean(anchorEl2)}
 					onClose={handleClose2}
 				>
-					<MenuItem onClick={changeStatus} name="false" data-name="false">
+					<MenuItem onClick={changeStatus} name='false' data-name='false'>
 						Во время
 					</MenuItem>
-					<MenuItem onClick={changeStatus} name="true" data-name="true">
+					<MenuItem onClick={changeStatus} name='true' data-name='true'>
 						Опоздал
 					</MenuItem>
 				</Menu>
@@ -207,11 +220,8 @@ function OrdersTable(props) {
 								[
 									o => {
 										switch (order.id) {
-											case 'isLate': {
-												return o.isLate;
-											}
-											case 'date': {
-												return o.date;
+											case 'hasScanned': {
+												return o.hasScanned;
 											}
 											default: {
 												return o[order.id];
@@ -253,7 +263,7 @@ function OrdersTable(props) {
 											data-value={n.id}
 											onClick={e => handleClickStatus(e, n.id)}
 										>
-											<OrdersStatus name={n.isLate} />
+											<OrdersStatus name={getUserShiftStatus(n)} />
 											{!!n.minutesLate && ` на ${n.minutesLate} мин.`}
 										</TableCell>
 

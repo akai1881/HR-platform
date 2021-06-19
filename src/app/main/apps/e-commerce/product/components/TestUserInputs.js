@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, createRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, InputLabel, MenuItem, TextField, Select, OutlinedInput } from '@material-ui/core';
-import ReactHookFormSelect from './ReactHookFormSelect';
-import { firstColumn, secondColumn } from './../constants';
 import { useSelector } from 'react-redux';
 import { TimePicker } from '@material-ui/pickers';
+import ReactHookFormSelect from './ReactHookFormSelect';
+import { firstColumn, secondColumn } from '../constants';
 
 const useStyles = makeStyles(theme => ({
 	inputCol: {
@@ -70,18 +70,18 @@ function TestUserInputs({
 								className="mb-20 text-red-300"
 								fullWidth
 							>
-								<InputLabel htmlFor={item.id} id={item.id + '__label'}>
+								<InputLabel htmlFor={item.id} id={`${item.id}__label`}>
 									{item.label}
 								</InputLabel>
 								<Select
 									input={
 										<OutlinedInput
-											value={selectValue ? selectValue : ''}
+											value={selectValue || ''}
 											id={item.id}
 											labelWidth={'department'.length * 8}
 										/>
 									}
-									value={selectValue ? selectValue : ''}
+									value={selectValue || ''}
 									onChange={e => handleChange(e)}
 								>
 									{departments.map((dep, i) => {
@@ -128,7 +128,6 @@ function TestUserInputs({
 						return (
 							<TimePicker
 								clearable
-								ampm={true}
 								name={item.name}
 								className={classes.inputField}
 								// label="24 hours"
@@ -141,25 +140,24 @@ function TestUserInputs({
 
 					if ((item.name === 'password' && params !== 'new') || (item.name === 'role' && params !== 'new')) {
 						return null;
-					} else {
-						return (
-							<TextField
-								key={`${item.id}-inp`}
-								className={classes.inputField}
-								defaultValue={editData[item.name] !== '' ? editData[item.name] : ''}
-								label={item.label}
-								error={errors[item.name] && !!errors[item.name]}
-								helperText={errors[item.name] && errors[item.name].message}
-								type={item.type}
-								id={item.id}
-								inputRef={register}
-								name={item.name}
-								variant="outlined"
-								fullWidth
-								{...item.props}
-							/>
-						);
 					}
+					return (
+						<TextField
+							key={`${item.id}-inp`}
+							className={classes.inputField}
+							defaultValue={editData[item.name] !== '' ? editData[item.name] : ''}
+							label={item.label}
+							error={errors[item.name] && !!errors[item.name]}
+							helperText={errors[item.name] && errors[item.name].message}
+							type={item.type}
+							id={item.id}
+							inputRef={register}
+							name={item.name}
+							variant="outlined"
+							fullWidth
+							{...item.props}
+						/>
+					);
 				})}
 			</div>
 			<div className={classes.inputCol}>
@@ -188,23 +186,22 @@ function TestUserInputs({
 
 					if (item.name === 'rank' && userRole === 'user') {
 						return null;
-					} else {
-						return (
-							<TextField
-								key={`${item.id}-inp`}
-								className={classes.inputField}
-								defaultValue={editData[item.name] !== '' ? editData[item.name] : ''}
-								label={item.label}
-								type={item.type}
-								id={item.id}
-								inputRef={register}
-								name={item.name}
-								variant="outlined"
-								fullWidth
-								{...item.props}
-							/>
-						);
 					}
+					return (
+						<TextField
+							key={`${item.id}-inp`}
+							className={classes.inputField}
+							defaultValue={editData[item.name] !== '' ? editData[item.name] : ''}
+							label={item.label}
+							type={item.type}
+							id={item.id}
+							inputRef={register}
+							name={item.name}
+							variant="outlined"
+							fullWidth
+							{...item.props}
+						/>
+					);
 				})}
 			</div>
 		</>

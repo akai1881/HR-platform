@@ -234,20 +234,21 @@ function Product(props) {
 	}
 
 	function addUser(data) {
+		console.log('this is before userData', { ...data, dueTime: new Date(selectedDate) });
 		const userData = {
 			...data,
-			avatarFile,
+			// avatarFile,
 			dueTime: new Date(selectedDate),
 			department: {
 				id: userDepartment.id,
 				name: userDepartment.name
 			},
-			uid: FuseUtils.generateGUID(),
-			projects,
-			career
+			uid: FuseUtils.generateGUID()
+			// projects,
+			// career
 		};
 		console.log('THIS IS ADD USER', userData);
-		// dispatch(registerUser(userData));
+		dispatch(registerUser(userData));
 		// history.push('/apps/contacts/all');
 	}
 
@@ -344,26 +345,26 @@ function Product(props) {
 			}}
 			header={
 				savedValues && (
-					<div className="flex flex-1 w-full items-center justify-between">
-						<div className="flex flex-col items-start max-w-full">
-							<FuseAnimate animation="transition.slideRightIn" delay={300}>
+					<div className='flex flex-1 w-full items-center justify-between'>
+						<div className='flex flex-col items-start max-w-full'>
+							<FuseAnimate animation='transition.slideRightIn' delay={300}>
 								<Typography
-									className="normal-case flex items-center sm:mb-12"
+									className='normal-case flex items-center sm:mb-12'
 									component={Link}
-									role="button"
-									to="/apps/contacts/all"
-									color="inherit"
+									role='button'
+									to='/apps/contacts/all'
+									color='inherit'
 								>
-									<Icon className="text-20">
+									<Icon className='text-20'>
 										{theme.direction === 'ltr' ? 'arrow_back' : 'arrow_forward'}
 									</Icon>
-									<span className="mx-4">Сотрудники</span>
+									<span className='mx-4'>Сотрудники</span>
 								</Typography>
 							</FuseAnimate>
 						</div>
-						<div className="flex flex-col min-w-0 mx-8 sm:mc-16">
-							<FuseAnimate animation="transition.slideLeftIn" delay={300}>
-								<Typography className="text-16 sm:text-20 truncate">
+						<div className='flex flex-col min-w-0 mx-8 sm:mc-16'>
+							<FuseAnimate animation='transition.slideLeftIn' delay={300}>
+								<Typography className='text-16 sm:text-20 truncate'>
 									{savedValues.firstName !== ''
 										? `${savedValues.firstName} ${savedValues.lastName}`
 										: 'Новый сотрудник'}
@@ -371,11 +372,11 @@ function Product(props) {
 							</FuseAnimate>
 						</div>
 						{userId === 'new' ? (
-							<FuseAnimate animation="transition.slideRightIn" delay={300}>
+							<FuseAnimate animation='transition.slideRightIn' delay={300}>
 								<Button
-									className="whitespace-no-wrap normal-case"
-									variant="contained"
-									color="secondary"
+									className='whitespace-no-wrap normal-case'
+									variant='contained'
+									color='secondary'
 									// disabled={!canBeSubmitted()}
 									// onClick={() => dispatch(saveProduct(form))}
 									onClick={handleSubmit(addUser)}
@@ -384,11 +385,11 @@ function Product(props) {
 								</Button>
 							</FuseAnimate>
 						) : (
-							<FuseAnimate animation="transition.slideRightIn" delay={300}>
+							<FuseAnimate animation='transition.slideRightIn' delay={300}>
 								<Button
-									className="whitespace-no-wrap normal-case"
-									variant="contained"
-									color="secondary"
+									className='whitespace-no-wrap normal-case'
+									variant='contained'
+									color='secondary'
 									// disabled={!canBeSubmitted()}
 									// onClick={() => dispatch(saveProduct(form))}
 									onClick={handleSubmit(editUser)}
@@ -404,20 +405,20 @@ function Product(props) {
 				<Tabs
 					value={tabValue}
 					onChange={handleChangeTab}
-					indicatorColor="primary"
-					textColor="primary"
-					variant="scrollable"
-					scrollButtons="auto"
+					indicatorColor='primary'
+					textColor='primary'
+					variant='scrollable'
+					scrollButtons='auto'
 					classes={{ root: 'w-full h-64' }}
 				>
-					<Tab className="h-64 normal-case" label="Основная информация" />
-					<Tab className="h-64 normal-case" label="Проекты" />
-					<Tab className="h-64 normal-case" label="Карьера" />
+					<Tab className='h-64 normal-case' label='Основная информация' />
+					<Tab className='h-64 normal-case' label='Проекты' />
+					<Tab className='h-64 normal-case' label='Карьера' />
 				</Tabs>
 			}
 			content={
 				savedValues ? (
-					<div className="p-16 sm:p-24 max-w-full">
+					<div className='p-16 sm:p-24 max-w-full'>
 						<ProjectDialog getProject={handleUserCareerOrProfile} projects={projects} />
 						<CareerDialog getCareer={handleUserCareerOrProfile} />
 						{
@@ -427,23 +428,23 @@ function Product(props) {
 										<div className={classes.imagePreview}>
 											<Icon
 												className={!image ? classes.imageNone : classes.imageDelete}
-												color="action"
+												color='action'
 												onClick={handleRemoveImage}
 											>
 												delete
 											</Icon>
 											{loading ? (
-												<div className="w-full h-full flex justify-center items-center">
+												<div className='w-full h-full flex justify-center items-center'>
 													<CircularProgress />
 												</div>
 											) : (
-												<Avatar className="w-full h-full" src={avatarFile} />
+												<Avatar className='w-full h-full' src={avatarFile} />
 											)}
 										</div>
 										<FileInput
-											text="Загрузить фотографию"
-											id="img"
-											classProp="10px"
+											text='Загрузить фотографию'
+											id='img'
+											classProp='10px'
 											handleUploadChange={handleUploadPhoto}
 										/>
 									</div>
@@ -475,33 +476,33 @@ function Product(props) {
 						)}
 					</div>
 				) : (
-					<div className="p-16 sm:p-24 max-w-full">
+					<div className='p-16 sm:p-24 max-w-full'>
 						{
 							<div style={{ display: tabValue === 0 ? 'flex' : 'none' }} className={classes.inputWrapper}>
 								<div className={classes.imageContainer}>
-									<Skeleton variant="rect" width={200} height={200} animation="wave" />
+									<Skeleton variant='rect' width={200} height={200} animation='wave' />
 								</div>
-								<div className="flex flex-col w-1/3 mr-20">
+								<div className='flex flex-col w-1/3 mr-20'>
 									{firstColumn.map(item => (
 										<Skeleton
-											variant="rect"
+											variant='rect'
 											key={`${item.name}-${item.id}`}
-											width="100%"
+											width='100%'
 											height={50}
-											className="mb-20"
-											animation="wave"
+											className='mb-20'
+											animation='wave'
 										/>
 									))}
 								</div>
-								<div className="flex flex-col w-1/3">
+								<div className='flex flex-col w-1/3'>
 									{firstColumn.map(item => (
 										<Skeleton
-											variant="rect"
+											variant='rect'
 											key={`${item.name}-${item.id}`}
-											width="100%"
+											width='100%'
 											height={50}
-											className="mb-20"
-											animation="wave"
+											className='mb-20'
+											animation='wave'
 										/>
 									))}
 								</div>

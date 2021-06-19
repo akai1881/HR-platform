@@ -55,8 +55,9 @@ export const registerUser = createAsyncThunk('eCommerceApp/product/registerUser'
 	await secondaryApp
 		.auth()
 		.createUserWithEmailAndPassword(email, password)
-		.then(async function (firebaseUser) {
-			const user = firebaseUser.user;
+		// eslint-disable-next-line func-names
+		.then(async function(firebaseUser) {
+			const { user } = firebaseUser;
 			await firebaseService.database
 				.collection('users')
 				.doc(user.uid)
@@ -64,10 +65,10 @@ export const registerUser = createAsyncThunk('eCommerceApp/product/registerUser'
 					email,
 					id: user.uid,
 					uid: user.uid,
-					...re
+					...rest
 				});
-			await saveToUserCollections(projects, 'projects', user.uid);
-			await saveToUserCollections(career, 'career', user.uid);
+			// await saveToUserCollections(projects, 'projects', user.uid);
+			// await saveToUserCollections(career, 'career', user.uid);
 			await secondaryApp.auth().signOut();
 			await dispatch(getData({ id: 'all' }));
 		});

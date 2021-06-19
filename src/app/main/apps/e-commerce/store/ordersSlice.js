@@ -21,9 +21,9 @@ export const getUsersData = createAsyncThunk('eCommerceApp/orders/getUsersData',
 
 	const usersData = await usersRef.docs.map(doc => ({
 		...doc.data(),
-		date: moment(doc.data().date.toDate()).format('h:mm a'),
-		time: doc.data().date.toDate(),
-		dueTime: moment(doc.data().dueTime.toDate()).format('h:mm a'),
+		date: doc.data().date && moment(doc.data().date?.toDate()).format('h:mm a'),
+		time: doc.data().date?.toDate() ?? '',
+		dueTime: doc.data().dueTime && moment(doc.data().dueTime.toDate()).format('h:mm a'),
 		id: doc.data().uid
 	}));
 
@@ -32,12 +32,13 @@ export const getUsersData = createAsyncThunk('eCommerceApp/orders/getUsersData',
 	return usersData;
 });
 
-export const changeUserStatus = createAsyncThunk('eCommerceApp/orders/changeUserStatus', async (data, {dispatch}) => {
-	const {dayId, userId, userData} = data;
+export const changeUserStatus = createAsyncThunk('eCommerceApp/orders/changeUserStatus', async (data, { dispatch }) => {
+	const { dayId, userId, userData } = data;
 	return firebaseService.database.doc(`/shifts/${dayId}/users/${userId}`).update({
 		userData
-	}).then(() => dispatch(getUsersData(dayId)))
-})
+	})
+		.then(() => dispatch(getUsersData(dayId)));
+});
 
 export const getTime = createAsyncThunk('eCommerceApp/orders/getTime', async params => {
 	let time;
@@ -99,7 +100,7 @@ const ordersSlice = createSlice({
 				},
 				data: null
 			};
-		},
+		}
 	},
 	extraReducers: {
 		// [getOrders.fulfilled]: ordersAdapter.setAll,

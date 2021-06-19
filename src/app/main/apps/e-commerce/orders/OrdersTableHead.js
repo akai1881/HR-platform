@@ -38,7 +38,7 @@ const rows = [
 		sort: true
 	},
 	{
-		id: 'isLate',
+		id: 'hasScanned',
 		align: 'left',
 		disablePadding: false,
 		label: 'Статус',
